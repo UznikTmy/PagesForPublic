@@ -222,14 +222,13 @@ canvas.onmousedown = function(e){
 	for(i=0;i<9;i++) counter += pile[i];
 	if(counter==0){
 		context.font = 'bold 72px "Times New Roman"';
-		context.fillText('\u{1F389}', window.innerWidth/2-80, window.innerHeight/2-60);
+		context.fillText('\u{1F389}', 450-80, 200-60);
 		context.font = 'bold 36px "Times New Roman"';
-		context.fillText('Поздравляем!', window.innerWidth/2-160, window.innerHeight/2);
-		context.fillText('Пасьянс сошелся!', window.innerWidth/2-195, window.innerHeight/2+40);
+		context.fillText('Поздравляем!', 450-160, 200);
+		context.fillText('Пасьянс сошелся!', 450-195, 200+40);
 		winFlag = true;
 	}
 }
-
 
 </script>
 
