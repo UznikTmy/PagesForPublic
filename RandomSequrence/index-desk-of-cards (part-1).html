@@ -1,0 +1,76 @@
+﻿<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Desk of cards</title>
+    <style type="text/css">
+		body, div {font: 11px Verdana;}
+    </style>
+
+</head>
+
+<body>
+<script type="text/javascript">
+
+var numOfCards = 36;
+
+// создаем массив, где значения ячеек приравнено их индексам
+
+var arr = [];
+
+for(var n=0; n<numOfCards; n++){
+	arr[n] = n;
+}
+
+
+// затем проходим по этому массиву и выполняем 
+// перестановки случайным образом.
+
+for(n=1; n<arr.length; n++){
+	var rnd = Math.floor(Math.random()*(arr.length));
+	var temp = arr[n];
+	arr[n] = arr[rnd];
+	arr[rnd] = temp;
+}
+
+// и теперь мы располагаем массивом, содержащим случайные
+// числа без повторов (колода карт, бочонки лото и т.д.)
+
+
+// далее, используюя счетчик ходов (переменную throwCounter)
+// мы всегда будем иметь под рукой случайное число,
+// не повторяющее предыдущие.
+
+var throwCounter = 0; // throwCounter < numOfCards
+var deskOfCards = [
+	"6 &spades;", "6 &clubs;", "6 &diams;", "6 &hearts;", 
+	"7 &spades;", "7 &clubs;", "7 &diams;", "7 &hearts;", 
+	"8 &spades;", "8 &clubs;", "8 &diams;", "8 &hearts;", 
+	"9 &spades;", "9 &clubs;", "9 &diams;", "9 &hearts;", 
+	"10 &spades;", "10 &clubs;", "10 &diams;", "10 &hearts;", 
+	"В &spades;", "В &clubs;", "В &diams;", "В &hearts;", 
+	"Д &spades;", "Д &clubs;", "Д &diams;", "Д &hearts;", 
+	"К &spades;", "К &clubs;", "К &diams;", "К &hearts;", 
+	"Т &spades;", "Т &clubs;", "Т &diams;", "Т &hearts;"
+];
+
+// Подпись к таблице (легенда)
+document.write("Номер хода / случайное значение / выпавщая карта <br><br>");
+
+// Вывод всей колоды "карта за картой".
+for(n=1; n<arr.length; n++){
+	throwCounter++; // устанавливаем номер хода (повышаем счетчик ходов)
+	var rnd = arr[throwCounter-1]; // забираем следующее случайное значение
+	var div = document.createElement('div'); // отображаем
+	document.body.appendChild(div);
+	div.innerHTML = (throwCounter<10?"&nbsp;&nbsp;":"")
+		+ "<b>" + throwCounter + "</b>" + ". &nbsp; " 
+		+ (rnd<10?"&nbsp;&nbsp;":"") + "<i>" + rnd + "</i>"
+		+ "&nbsp; &nbsp; &nbsp;" + deskOfCards[rnd];
+}
+
+
+</script>
+
+</body>
+</html>

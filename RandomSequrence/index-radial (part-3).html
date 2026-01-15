@@ -1,0 +1,166 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Звёздное небо</title>
+    
+    <style type="text/css">
+		* {margin:0;}
+		body {background-color:#000; overflow:hidden;}
+    </style>
+
+</head>
+
+<body>
+<!--  развернуть окно браузера на весь экран - F11 -->
+<script type="text/javascript">
+window.onload = function(){
+	
+	var coordFlag = false; // gridlines on/off
+	var field = 40; // поля - отступы от верха и низа документа
+
+	// количество, размер и цвет звезд
+	var starsCount = 50, starR = 1.75, starC = '#ffffff';
+
+	var Xc = window.innerWidth/2,  /// х координата центра холста
+	    Yc = window.innerHeight/2, /// у координата центра холста
+		Rk = 5,          /// расстояние между окружностями коорд. сетки
+		alfa = 6,        /// alfa*n секторов на круг коорд. сетки (n - номер окр)
+		Ak = -2*Math.PI/alfa,      /// угловая сетка, интервал угла
+		R = (window.innerHeight/2-field)/Rk; /// размер сетки: R радиусов через Rk
+	var cube = 6; // количество "граней игрального кубика"
+
+
+	// вывод холста
+	var canvasID = document.createElement('canvas');
+	var contextID = canvasID.getContext('2d');
+	document.body.appendChild(canvasID);
+	canvasID.width = window.innerWidth;
+	canvasID.height = window.innerHeight;
+	// фон
+	function plan(){
+		contextID.fillStyle = '#000000';
+		contextID.fillRect(0, 0, canvasID.width, canvasID.height);
+	
+		// строим линии координатной сетки 
+		// [начало]
+		if(coordFlag){
+			contextID.strokeStyle = '#333333';
+			contextID.lineWidth = 0.3;
+			var angel;
+			for(i=1;i<=R;i++){ // обходим радиусы, R=16
+				contextID.beginPath();
+				contextID.arc(Xc, Yc, i*Rk, 0, 2*Math.PI, false);
+				for(j=0;j<i*alfa;j++){ // обходим сектора, alfa=6
+					var angel = 2*Math.PI/(i*alfa) * j;
+					contextID.moveTo(
+						Xc + (i-1)*Rk*Math.cos(angel),
+						Yc + (i-1)*Rk*Math.sin(-angel)
+					);
+					contextID.lineTo(
+						Xc + i*Rk*Math.cos(angel),
+						Yc + i*Rk*Math.sin(-angel)
+					);
+					contextID.stroke();
+				}
+				contextID.closePath();
+			}
+		}
+		// [конец]
+	}
+
+	plan();
+
+
+	// генерируем полярные координаты одной точки
+	var stars = [];
+	function rnd(){
+		var rndR = 0, rndA = 0, i;
+		for(i=1; i<(window.innerHeight/2-field)/Rk; i++){
+			if(1==Math.floor(Math.random()*cube)+1) break;
+		}
+		if(i>=(window.innerHeight/2-field)/Rk) /// если значение выходит за пределы
+			return rnd();                      /// зоны видимости, то повтор
+		rndR = Rk*i; // радиус, равный длинне серии (в масштабе Rk=10)
+		rndA = 2 * Math.PI * Math.random(); // случайный угол
+		/*
+		for(i=0; i<stars.length; i++) // избегаем одинаковых значений координат
+			if(stars[i][0]==rndR&&stars[i][1]==rndA)
+				return rnd();
+		*/
+		return [rndR, rndA];
+	}
+
+
+	// генерируем начальное расположение звезд
+	function skyGenerate(){
+		for(var i=0;i<starsCount;i++)
+			stars[i] = rnd();
+	}
+	
+	skyGenerate();
+
+
+	// функция вывода одной точки
+	function point(arr){
+		var x = (arr[0]-Rk/2)*Math.cos(arr[1]); /// преобразование из полярных
+		var y = (arr[0]-Rk/2)*Math.sin(arr[1]); /// координат в прямоугольные
+		contextID.beginPath();
+		contextID.arc(x+Xc, y+Yc, starR, 0, 2*Math.PI, false);
+		contextID.closePath();
+		contextID.fillStyle = starC; // '#ffffff'
+		contextID.fill();
+	}
+
+
+	// фунция вывода всех точек
+	function StarrySky(){
+		for(var n=0;n<starsCount;n++)
+			point(stars[n]);
+	}
+
+	StarrySky();
+
+
+	// текст на странице
+	function legend(){
+		contextID.fillStyle = '#ffffff';
+		contextID.font = 'bold 11px Verdana';
+		contextID.fillText('Starry Sky', 8, 16);
+		contextID.font = '11px Verdana';
+		contextID.fillText('Hotkey \'g\' gridlines off/on', 8, 36);
+		contextID.fillText('Hotkey \'u\' update generation', 8, 50);
+	}
+
+	legend();
+
+
+
+// HotKeys
+window.onkeydown = function(e){
+	e = e || window.event; // alert(e.keyCode);
+	switch (e.keyCode) {
+		case 71: 						// 'g' - GridLines
+			coordFlag = !coordFlag;
+			plan();
+			StarrySky();
+			legend();
+			break;
+//		case 82: 						// 'r' - Refresh
+		case 85: 						// 'u' - Update
+			stars = [];
+			skyGenerate();
+			plan();
+			StarrySky();
+			legend();
+			break;
+		default: 
+			break;
+	}
+}
+
+}
+
+</script>
+</body>
+</html>

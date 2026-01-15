@@ -1,0 +1,106 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Звездное небо</title>
+    
+    <style type="text/css">
+		* {margin:0;}
+		body {background-color:#000000; overflow:hidden;}
+    </style>
+
+</head>
+
+<body>
+<!--  Чтобы развернуть окно браузера на весь экран, нажать F11 -->
+<!--  Запись видео с экрана: Win+G или Win+Alt+R  -->
+<!--  Горячие клавиши: 'd' - Debugger on/off; 'Esc', 's' - Stop; 'c' - Cursor on/off  -->
+<script type="text/javascript">
+
+// create canvas
+var canvasID = document.createElement('canvas');
+var contextID = canvasID.getContext('2d');
+document.body.appendChild(canvasID);
+canvasID.width = window.innerWidth;
+canvasID.height = window.innerHeight;
+//contextID.fillStyle = '#000000';
+//contextID.fillRect(0, 0, canvasID.width, canvasID.height);
+
+var Xc = window.innerWidth/2;
+var Yc = window.innerHeight/2;
+var starsCount = 85;
+
+// generate stars[alfa, r, R], R - star size
+var stars = [];
+for(i=0;i<starsCount;i++){
+	stars[i] = [2*Math.PI*Math.random(), Math.pow(i/starsCount, 3)*1366/2, 3*Math.random()+1];
+}
+
+// debugger
+var divID = document.createElement('div');
+document.body.appendChild(divID);
+divID.style.display = 'none';
+divID.style.position = 'absolute';
+divID.style.top = 3 + 'px';
+divID.style.left = 6 + 'px';
+divID.style.zIndex = 99;
+divID.style.font = '12px Arial';
+divID.style.color = '#ffffff';
+//
+
+var timerCounter = 0;
+var timerID = setInterval(function(){
+	var x, y, r;
+	// begin debugger
+	divID.innerHTML = 'Count of stars: ' + stars.length;
+	// end debugger
+	contextID.clearRect(0, 0, canvasID.width, canvasID.height);
+	if(stars[stars.length-1][1]>999){ // 1366/2 // 1567/2=784
+		for(i=stars.length-1;i>0;i--)
+			stars[i] = stars[i-1];
+		stars[0] = [2*Math.PI*Math.random(), 0, 3*Math.random()+1];
+	}
+	for(i=0;i<stars.length;i++){
+//		stars[i][1] = Math.pow(Math.pow(stars[i][1], 1/3) + 1/20, 3); // Math.pow((i+1), 3)/200;
+		stars[i][1] = Math.pow(Math.pow(stars[i][1], 1/2) + 1/6, 2); // Math.pow((i+1), 3)/200;
+		x = stars[i][1]*Math.cos(stars[i][0]);
+		y = stars[i][1]*9/16*Math.sin(stars[i][0]);
+		r = (i+1)/stars.length * (stars[i][2]-0.5) + 0.5;
+		contextID.beginPath();
+		contextID.arc(x+Xc, y+Yc, r, 0, 2*Math.PI, false);
+		contextID.closePath();
+		contextID.fillStyle = '#ffffff';
+		contextID.fill();
+	}
+	if(timerCounter++>100)timerCounter=0;//clearInterval(timerID);
+}, 100);
+
+
+
+// HotKeys
+var cursorFlag = true;
+window.onkeydown = function(e){
+	e = e || window.event; // alert(e.keyCode);
+	switch (e.keyCode) {
+		case 67:						// 'c' - Cursor on/off
+			cursorFlag = !cursorFlag;
+			canvasID.style.cursor = (cursorFlag) ? 'default' : 'none';
+			break;
+		case 68: 						// 'd' - Debug show/hide
+			if(divID.style.display == 'none')
+				divID.style.display = 'block';
+			else
+				divID.style.display = 'none';
+			break;
+		case 27:						// Esc - Stop moving
+		case 83: 						// 's' - Stop moving
+			clearInterval(timerID);
+			break;
+		default: 
+			break;
+	}
+}
+
+</script>
+</body>
+</html>
