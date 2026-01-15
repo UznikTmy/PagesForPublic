@@ -1,0 +1,228 @@
+﻿<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Пасьянс &laquo;Узник&raquo;</title>
+    <style type="text/css">
+    </style>
+
+</head>
+
+<body>
+<script type="text/javascript">
+// Prisoner Solitaire
+
+// Canvas activate
+var canvas = document.createElement('canvas');
+var context = canvas.getContext('2d');
+with(canvas.style){position='absolute'; top=0; left=0; cursor='pointer';}
+document.body.appendChild(canvas);
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+context.font = 'bold 12px Verdana';
+
+
+// Card parametrs
+var cardWidth = 80, cardHeight = 120, cardSpace = 12, cardShift = 30, 
+	cardLeft = 16, cardTop = 32;
+
+
+// Buttons:
+// [x, y, width, height, textTop, textLeft, textColor, bgColor, bgOver, text]
+var hotspot1 = [10, 3, 110, 20, 15, 6, 
+	'#333300', '#fff', '#ccff33', 'Новая игра'];
+var hotspot2 = [732, 3, 110, 20, 15, 6, 
+	'#333300', '#fff', '#ccff33', 'Отменить ход'];
+var hotspot3 = [347, 3, 110, 20, 15, 17, 
+	'#333300', '#fff', '#ccff33', 'Пояснение'];
+
+context.fillStyle = hotspot1[7];
+context.fillRect(hotspot1[0], hotspot1[1], hotspot1[2], hotspot1[3]);
+context.fillStyle = hotspot2[7];
+context.fillRect(hotspot2[0], hotspot2[1], hotspot2[2], hotspot2[3]);
+context.fillStyle = hotspot3[7];
+context.fillRect(hotspot3[0], hotspot3[1], hotspot3[2], hotspot3[3]);
+context.fillStyle = hotspot1[6];
+context.fillText(hotspot1[9], hotspot1[0]+hotspot1[5], hotspot1[1]+hotspot1[4]);
+context.fillStyle = hotspot2[6];
+context.fillText(hotspot2[9], hotspot2[0]+hotspot2[5], hotspot2[1]+hotspot2[4]);
+context.fillStyle = hotspot3[6];
+context.fillText(hotspot3[9], hotspot3[0]+hotspot3[5], hotspot3[1]+hotspot3[4]);
+
+
+
+// Deck make
+var deck = new Array(37), i, j, t, rnd;
+for(i=0;i<=36;i++)
+	deck[i] = i;
+for(i=1;i<=36;i++){
+	t = deck[i];
+	rnd = Math.floor(Math.random()*36+1);
+	deck[i] = deck[rnd];
+	deck[rnd] = t;
+}
+var image = Array(37), n, m, str = '';
+for(i=0;i<=36;i++){
+	image[i] = new Image();
+	image[i].src = 'card/card-' + i + '.png';
+}
+image[36].onload = function(){
+	for(j=0;j<4;j++)
+		for(i=0;i<9;i++)
+			context.drawImage(image[deck[(j<3 ? 0 : i+j*9+1)]], cardLeft + i*(cardWidth+cardSpace), cardTop + j*cardShift);
+}
+var pile = new Array(9), counter, str;
+for(var i=0;i<9;i++)
+	pile[i] = 4;
+
+
+var hospotFlag = [false, false, false];
+canvas.onmousemove = function(e){
+	e.preventDefault();
+	e.stopPropagation();
+	var x = e.clientX - canvas.offsetLeft;
+	var y = e.clientY - canvas.offsetTop;
+	context.font = 'bold 12px Verdana';
+	if(x>hotspot1[0] && x<hotspot1[0]+hotspot1[2] && y>hotspot1[1] && y<hotspot1[1]+hotspot1[3]){
+		context.fillStyle = hotspot1[8];
+		context.fillRect(hotspot1[0], hotspot1[1], hotspot1[2], hotspot1[3]);
+		context.fillStyle = hotspot1[6];
+		context.fillText(hotspot1[9], hotspot1[0]+hotspot1[5], hotspot1[1]+hotspot1[4]);
+		hospotFlag[0] = true;
+	}
+	else if(hospotFlag[0]) {
+		context.fillStyle = hotspot1[7];
+		context.fillRect(hotspot1[0], hotspot1[1], hotspot1[2], hotspot1[3]);
+		context.fillStyle = hotspot1[6];
+		context.fillText(hotspot1[9], hotspot1[0]+hotspot1[5], hotspot1[1]+hotspot1[4]);
+		hospotFlag[0] = false;
+	}
+	if(x>hotspot2[0] && x<hotspot2[0]+hotspot2[2] && y>hotspot2[1] && y<hotspot2[1]+hotspot2[3]){
+		context.fillStyle = hotspot2[8];
+		context.fillRect(hotspot2[0], hotspot2[1], hotspot2[2], hotspot2[3]);
+		context.fillStyle = hotspot2[6];
+		context.fillText(hotspot2[9], hotspot2[0]+hotspot2[5], hotspot2[1]+hotspot2[4]);
+		hospotFlag[1] = true;
+	}
+	else if(hospotFlag[1]) {
+		context.fillStyle = hotspot2[7];
+		context.fillRect(hotspot2[0], hotspot2[1], hotspot2[2], hotspot2[3]);
+		context.fillStyle = hotspot2[6];
+		context.fillText(hotspot2[9], hotspot2[0]+hotspot2[5], hotspot2[1]+hotspot2[4]);
+		hospotFlag[1] = false;
+	}
+	if(x>hotspot3[0] && x<hotspot3[0]+hotspot3[2] && y>hotspot3[1] && y<hotspot3[1]+hotspot3[3]){
+		context.fillStyle = hotspot3[8];
+		context.fillRect(hotspot3[0], hotspot3[1], hotspot3[2], hotspot3[3]);
+		context.fillStyle = hotspot3[6];
+		context.fillText(hotspot3[9], hotspot3[0]+hotspot3[5], hotspot3[1]+hotspot3[4]);
+		if(!hospotFlag[2] && !winFlag) { // legend
+			context.font = '12px Verdana';
+			context.fillText("По легенде, этот пасьянс раскладывал узник, находясь в заточении: если пасьянс", 160.5, 320);
+			context.fillText("сойдется, его выпустят, а если нет, то... Легенда гласит, что пасьянс у него так ни", 160.5, 340);
+			context.fillText("разу и не сошелся, хотя раскладывал он его... до конца своей жизни, много-много", 160.5, 360);
+			context.fillText("лет.", 160.5, 380);
+			context.fillText("Правила просты: собирать пары карт одинакового номинала: К-К, 7-7 и т.д.", 160.5, 420);
+			context.fillText("Задача: освободить игровое поле, \"снять\" все карты.", 160.5, 440);
+		}
+		hospotFlag[2] = true;
+	}
+	else if(hospotFlag[2]) {
+		context.fillStyle = hotspot3[7];
+		context.fillRect(hotspot3[0], hotspot3[1], hotspot3[2], hotspot3[3]);
+		context.fillStyle = hotspot3[6];
+		context.fillText(hotspot3[9], hotspot3[0]+hotspot3[5], hotspot3[1]+hotspot3[4]);
+		if(!winFlag)context.clearRect(150, 300, 550, 150); // clear legend
+		hospotFlag[2] = false;
+	}
+	if(x>hotspot1[0] && x<hotspot1[0]+hotspot1[2] && y>hotspot1[1] && y<hotspot1[1]+hotspot1[3]){
+		canvas.style.cursor = 'pointer';
+		return;
+	}
+	if(x>hotspot2[0] && x<hotspot2[0]+hotspot2[2] && y>hotspot2[1] && y<hotspot2[1]+hotspot2[3]){
+		canvas.style.cursor = 'pointer';
+		return;
+	}
+	if(x>hotspot3[0] && x<hotspot3[0]+hotspot3[2] && y>hotspot3[1] && y<hotspot3[1]+hotspot3[3]){
+		canvas.style.cursor = 'pointer';
+		return;
+	}
+	for(var i=0;i<9;i++){
+		if(x>cardLeft + i*(cardWidth+cardSpace) && x<cardLeft + i*(cardWidth+cardSpace) + cardWidth
+			&& pile[i]>0 && y>cardTop+cardShift*(pile[i]-1) && y<cardTop+cardHeight+cardShift*(pile[i]-1)){
+			canvas.style.cursor = 'pointer';
+			return;
+		}
+	}
+	canvas.style.cursor = 'default';
+}
+
+
+var hist = new Array(), checkCard = -1, anyCardFlag = -1, winFlag = false;
+
+canvas.onmousedown = function(e){
+	var i, j;
+	e.preventDefault();
+	e.stopPropagation();
+	context.clearRect(cardLeft-3, cardTop-3, (cardWidth+cardSpace)*8+cardWidth+6, cardShift*3+cardHeight+6);
+	var x = e.clientX - canvas.offsetLeft;
+	var y = e.clientY - canvas.offsetTop;
+	anyCardFlag = -1;
+	for(i=0;i<9;i++){
+		if(pile[i]>0 && x>cardLeft + i*(cardWidth+cardSpace) && x<cardLeft + i*(cardWidth+cardSpace) + cardWidth && y>cardTop+cardShift*(pile[i]-1) && y<cardTop+cardHeight+cardShift*(pile[i]-1)){
+			var cardValue1 = deck[i+(pile[i]-1)*9+1];
+			var cardValue2 = deck[checkCard+(pile[checkCard]-1)*9+1] || 0;
+			var checkPair = (cardValue1 - Math.floor(cardValue1/9)*9) == (cardValue2 - Math.floor(cardValue2/9)*9);
+			if(checkCard!=-1 && i!=checkCard && checkPair){
+				pile[i]--;
+				pile[checkCard]--;
+				hist.push(i);
+				hist.push(checkCard);
+			}
+			else if(checkCard!=-1 && i==checkCard){
+				checkCard = -1;
+			}
+			else {
+				anyCardFlag = i;
+				checkCard = i;
+			}
+		}
+	}
+	// history back
+	if(!winFlag && hist.length>0 && x>hotspot2[0] && x<hotspot2[0]+hotspot2[2] && y>hotspot2[1] && y<hotspot2[1]+hotspot2[3]){
+		pile[hist.pop()]++;
+		pile[hist.pop()]++;
+	}
+	// re-draw plaing field
+	for(i=0;i<9;i++)
+		for(j=0;j<pile[i];j++)
+			context.drawImage(image[deck[(j<pile[i]-1 ? 0 : i+j*9+1)]], cardLeft + i*(cardWidth+cardSpace), cardTop + j*cardShift);
+	if(anyCardFlag!=-1){
+		i = anyCardFlag;
+		context.strokeStyle = '#00ff00';
+		context.lineWidth = 4;
+		context.beginPath();
+		context.rect(cardLeft + i*(cardWidth+cardSpace), cardTop+cardShift*(pile[i]-1), cardWidth, cardHeight);
+		context.stroke();
+	}
+	if(anyCardFlag==-1)checkCard = -1;
+	// hotspot 'new game'
+	if(x>hotspot1[0] && x<hotspot1[0]+hotspot1[2] && y>hotspot1[1] && y<hotspot1[1]+hotspot1[3]) window.location.href = window.location.href;
+	// count of win
+	counter = 0;
+	for(i=0;i<9;i++) counter += pile[i];
+	if(counter==0){
+		context.font = 'bold 72px "Times New Roman"';
+		context.fillText('\u{1F389}', window.innerWidth/2-80, window.innerHeight/2-60);
+		context.font = 'bold 36px "Times New Roman"';
+		context.fillText('Поздравляем!', window.innerWidth/2-160, window.innerHeight/2);
+		context.fillText('Пасьянс сошелся!', window.innerWidth/2-195, window.innerHeight/2+40);
+		winFlag = true;
+	}
+}
+
+
+</script>
+
+</body>
+</html>
