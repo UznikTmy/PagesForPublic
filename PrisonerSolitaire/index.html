@@ -1,4 +1,4 @@
-﻿<!doctype html>
+<!doctype html>
 <html>
 <head>
     <meta charset="utf-8">
@@ -12,10 +12,18 @@
 <script type="text/javascript">
 // Prisoner Solitaire
 
+function isMob() {
+    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+}
+
+// if (isMob()) alert("Это мобильное устройство");
+// else alert("Это не мобильное устройство");
+
+
 // Canvas activate
 var canvas = document.createElement('canvas');
 var context = canvas.getContext('2d');
-with(canvas.style){position='absolute'; top=0; left=0; cursor='pointer';}
+with(canvas.style){position='absolute'; top=0; left=0; if(!isMob()){cursor='pointer';}}
 document.body.appendChild(canvas);
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
@@ -135,6 +143,7 @@ canvas.onmousemove = function(e){
 		if(!winFlag)context.clearRect(150, 300, 550, 150); // clear legend
 		hospotFlag[2] = false;
 	}
+	if(isMob()) return;
 	if(x>hotspot1[0] && x<hotspot1[0]+hotspot1[2] && y>hotspot1[1] && y<hotspot1[1]+hotspot1[3]){
 		canvas.style.cursor = 'pointer';
 		return;
