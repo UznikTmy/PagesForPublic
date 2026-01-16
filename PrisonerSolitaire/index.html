@@ -4,6 +4,7 @@
     <meta charset="utf-8">
     <title>Пасьянс &laquo;Узник&raquo;</title>
     <style type="text/css">
+		body {background:url(bg-pattern.png);}
     </style>
 
 </head>
@@ -16,17 +17,14 @@ function isMob() {
     return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 }
 
-// if (isMob()) alert("Это мобильное устройство");
-// else alert("Это не мобильное устройство");
-
 
 // Canvas activate
 var canvas = document.createElement('canvas');
 var context = canvas.getContext('2d');
 with(canvas.style){position='absolute'; top=0; left=0; if(!isMob()){cursor='pointer';}}
 document.body.appendChild(canvas);
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
+canvas.width = 852; // window.innerWidth;
+canvas.height = 600; // window.innerHeight;
 context.font = 'bold 12px Verdana';
 
 
@@ -37,11 +35,11 @@ var cardWidth = 80, cardHeight = 120, cardSpace = 12, cardShift = 30,
 
 // Buttons:
 // [x, y, width, height, textTop, textLeft, textColor, bgColor, bgOver, text]
-var hotspot1 = [10, 3, 110, 20, 15, 6, 
+var hotspot1 = [10, 5, 94, 20, 15, 8, 
 	'#333300', '#fff', '#ccff33', 'Новая игра'];
-var hotspot2 = [732, 3, 110, 20, 15, 6, 
+var hotspot2 = [727, 5, 110, 20, 15, 8, 
 	'#333300', '#fff', '#ccff33', 'Отменить ход'];
-var hotspot3 = [347, 3, 110, 20, 15, 17, 
+var hotspot3 = [367, 5, 110, 20, 15, 17, 
 	'#333300', '#fff', '#ccff33', 'Пояснение'];
 
 context.fillStyle = hotspot1[7];
@@ -125,7 +123,8 @@ canvas.onmousemove = function(e){
 		context.fillStyle = hotspot3[6];
 		context.fillText(hotspot3[9], hotspot3[0]+hotspot3[5], hotspot3[1]+hotspot3[4]);
 		if(!hospotFlag[2] && !winFlag) { // legend
-			context.font = '12px Verdana';
+			context.font = '13px Verdana';
+			context.fillStyle = '#ffffff';
 			context.fillText("По легенде, этот пасьянс раскладывал узник, находясь в заточении: если пасьянс", 160.5, 320);
 			context.fillText("сойдется, его выпустят, а если нет, то... Легенда гласит, что пасьянс у него так ни", 160.5, 340);
 			context.fillText("разу и не сошелся, хотя раскладывал он его... до конца своей жизни, много-много", 160.5, 360);
@@ -140,7 +139,7 @@ canvas.onmousemove = function(e){
 		context.fillRect(hotspot3[0], hotspot3[1], hotspot3[2], hotspot3[3]);
 		context.fillStyle = hotspot3[6];
 		context.fillText(hotspot3[9], hotspot3[0]+hotspot3[5], hotspot3[1]+hotspot3[4]);
-		if(!winFlag)context.clearRect(150, 300, 550, 150); // clear legend
+		if(!winFlag)context.clearRect(150, 300, 588, 150); // clear legend
 		hospotFlag[2] = false;
 	}
 	if(isMob()) return;
