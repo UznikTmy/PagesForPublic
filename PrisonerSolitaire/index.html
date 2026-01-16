@@ -21,7 +21,9 @@ function isMob() {
 // Canvas activate
 var canvas = document.createElement('canvas');
 var context = canvas.getContext('2d');
-with(canvas.style){position='absolute'; top=0; left=0; if(!isMob()){cursor='pointer';}}
+with(canvas.style){position='absolute'; 
+marginLeft='-426px';
+top=0; left='50%'; if(!isMob()){cursor='pointer';}}
 document.body.appendChild(canvas);
 canvas.width = 852; // window.innerWidth;
 canvas.height = 600; // window.innerHeight;
@@ -125,12 +127,12 @@ canvas.onmousemove = function(e){
 		if(!hospotFlag[2] && !winFlag) { // legend
 			context.font = '13px Verdana';
 			context.fillStyle = '#ffffff';
-			context.fillText("По легенде, этот пасьянс раскладывал узник, находясь в заточении: если пасьянс", 160.5, 320);
-			context.fillText("сойдется, его выпустят, а если нет, то... Легенда гласит, что пасьянс у него так ни", 160.5, 340);
-			context.fillText("разу и не сошелся, хотя раскладывал он его... до конца своей жизни, много-много", 160.5, 360);
-			context.fillText("лет.", 160.5, 380);
-			context.fillText("Правила просты: собирать пары карт одинакового номинала: К-К, 7-7 и т.д.", 160.5, 420);
-			context.fillText("Задача: освободить игровое поле, \"снять\" все карты.", 160.5, 440);
+			context.fillText("По легенде, этот пасьянс раскладывал узник, находясь в заточении: если пасьянс", 140.5, 320);
+			context.fillText("сойдется, его выпустят, а если нет, то... Легенда гласит, что пасьянс у него так ни", 140.5, 340);
+			context.fillText("разу и не сошелся, хотя раскладывал он его... до конца своей жизни, много-много", 140.5, 360);
+			context.fillText("лет.", 140.5, 380);
+			context.fillText("Правила просты: собирать пары карт одинакового номинала: К-К, 7-7 и т.д.", 140.5, 420);
+			context.fillText("Задача: освободить игровое поле, \"снять\" все карты.", 140.5, 440);
 		}
 		hospotFlag[2] = true;
 	}
@@ -139,7 +141,7 @@ canvas.onmousemove = function(e){
 		context.fillRect(hotspot3[0], hotspot3[1], hotspot3[2], hotspot3[3]);
 		context.fillStyle = hotspot3[6];
 		context.fillText(hotspot3[9], hotspot3[0]+hotspot3[5], hotspot3[1]+hotspot3[4]);
-		if(!winFlag)context.clearRect(150, 300, 588, 150); // clear legend
+		if(!winFlag)context.clearRect(130, 300, 588, 150); // clear legend
 		hospotFlag[2] = false;
 	}
 	if(isMob()) return;
