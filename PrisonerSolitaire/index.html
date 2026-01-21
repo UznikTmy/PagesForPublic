@@ -125,11 +125,11 @@ canvas.onmousemove = function(e){
 		context.fillStyle = hotspot3[6];
 		context.fillText(hotspot3[9], hotspot3[0]+hotspot3[5], hotspot3[1]+hotspot3[4]);
 		if(!hospotFlag[2] && !winFlag) { // legend
-			context.font = '13px Verdana';
+			context.font = '14px Verdana';
 			context.fillStyle = '#ffffff';
 			context.fillText("По легенде, этот пасьянс раскладывал узник, находясь в заточении: если пасьянс", 140.5, 320);
-			context.fillText("сойдется, его выпустят, а если нет, то... Легенда гласит, что пасьянс у него так ни", 140.5, 340);
-			context.fillText("разу и не сошелся, хотя раскладывал он его... до конца своей жизни, много-много", 140.5, 360);
+			context.fillText("сойдётся, его выпустят, а если нет, то... Легенда гласит, что пасьянс у него ни разу", 140.5, 340);
+			context.fillText("так и не сошёлся, хотя раскладывал он его... до конца своей жизни, много-много", 140.5, 360);
 			context.fillText("лет.", 140.5, 380);
 			context.fillText("Правила просты: собирать пары карт одинакового номинала: К-К, 7-7 и т.д.", 140.5, 420);
 			context.fillText("Задача: освободить игровое поле, \"снять\" все карты.", 140.5, 440);
@@ -227,7 +227,7 @@ canvas.onmousedown = function(e){
 		context.fillText('\u{1F389}', 450-80, 200-60);
 		context.font = 'bold 36px "Times New Roman"';
 		context.fillText('Поздравляем!', 450-160, 200);
-		context.fillText('Пасьянс сошелся!', 450-195, 200+40);
+		context.fillText('Пасьянс сошёлся!', 450-195, 200+40);
 		winFlag = true;
 	}
 }
@@ -236,4 +236,5 @@ canvas.onmousedown = function(e){
 
 </body>
 </html>
+
 
