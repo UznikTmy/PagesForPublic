@@ -223,6 +223,7 @@ canvas.onmousedown = function(e){
 	for(i=0;i<9;i++) counter += pile[i];
 	if(counter==0){
 		context.font = 'bold 72px "Times New Roman"';
+		context.fillStyle = '#ffffff';
 		context.fillText('\u{1F389}', 450-80, 200-60);
 		context.font = 'bold 36px "Times New Roman"';
 		context.fillText('Поздравляем!', 450-160, 200);
@@ -235,3 +236,4 @@ canvas.onmousedown = function(e){
 
 </body>
 </html>
+
