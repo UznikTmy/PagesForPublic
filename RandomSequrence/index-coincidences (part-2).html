@@ -5,10 +5,28 @@
     <title>Desk of cards, part 2</title>
     <style type="text/css">
         body, div {font: 11px Verdana;}
-		input {position:absolute; top:1px; right:25px; padding:2px; width:30px;}
-		button {position:absolute; top:1px; right:1px; width:24px; cursor: pointer;}
-        div#case1 {position:absolute; top:0; left:0; width:45%;}
-        div#case2 {position:absolute; top:0; left:50%; width:45%;}
+        div#case1, div#case2 {position:absolute; top:0; margin-top:40px;}
+        div#case1 {left:0; width:45%;}
+        div#case2 {left:50%; width:45%;}
+        form {
+            border-bottom:1px solid #999;
+            box-shadow: 0 0 10px 0 #999;
+            background:#FFFFFF;
+            display:block;
+            position:fixed;
+            top:0;
+            left:0;
+            width:100%; 
+            height:32px;
+        }
+        form * {position:absolute; top:4px;}
+        a#a1, a#a2, a#a3 {top:8px; }
+        a#a1 {left: 10px;}
+        a#a2 {left: 88px;}
+        a#a3 {left: 180px;}
+        input#sequence {left:260px; padding:2px; width:56px;}
+        input#cube {left:330px; padding:2px; width:30px;}
+        button {left:374px; width:56px; cursor: pointer;}
     </style>
 
 </head>
@@ -23,23 +41,51 @@ var part_1 = document.getElementById('case1');
 var part_2 = document.getElementById('case2');
 
 var cube = 6; // количество граней кубика
+var sequence = 1000; // количество реализаций
+
 
 // заплатка: передаем количество граней
-var get_cube = window.location.href.split('?');
-if(get_cube[1]) { cube = parseInt(get_cube[1]); }
+
+var get_param = window.location.href.split('?');
+if(get_param[1]) {
+    var param = get_param[1].split(':');
+    if(param[0]) cube = parseInt(param[0]); 
+    if(param[1]) sequence = parseInt(param[1]);
+    if(cube<2)cube=2;
+}
 var form = document.createElement('form');
-var inp = document.createElement('input');
+var inpCube = document.createElement('input');
+var inpSeq = document.createElement('input');
 var btn = document.createElement('button');
 document.body.appendChild(form);
-form.appendChild(inp);
+form.appendChild(inpSeq);
+form.appendChild(inpCube);
 form.appendChild(btn);
 btn.innerHTML = ' &crarr; ';
-inp.value = cube;
+inpSeq.id = 'sequence';
+inpCube.id = 'cube';
+inpSeq.value = sequence;
+inpCube.value = cube;
 form.onsubmit = function(){
-	window.location.href = get_cube[0] + '?' + inp.value;
-	return false;
+    window.location.href = get_param[0] + '?' + inpCube.value + ':' + inpSeq.value;
+    return false;
 }
+// добавляем кнопки прокрутки к началу страницы, графикам и в конец.
+var a = [];
+for(var n=0; n<3; n++){
+    a[n] = document.createElement('a');
+    a[n].href = 'http://';
+    a[n].id = 'a'+(n+1);
+    form.appendChild(a[n]);
+}
+a[0].innerHTML = 'В начало'; 
+a[0].onclick = function(){ window.scroll(0,0); return false;}
+a[1].innerHTML = 'На график';
+a[1].onclick = function(){ divG1.scrollIntoView(); window.scrollBy(0, -32); return false;}
+a[2].innerHTML = 'В конец';
+a[2].onclick = function(){ window.scrollTo(0, 999999); return false;}
 // конец заплатки
+
 
 
 // создаем нормальное распределение случайных значений
@@ -49,7 +95,7 @@ part_1.appendChild(div);
 div.innerHTML = 'Случайные значения, выпавшие на <br>кубике ('+cube+' граней): ';
 
 var arr1 = [];
-for(var n=1; n<=1000; n++){
+for(var n=1; n<=sequence; n++){
     arr1[n-1] = Math.floor(Math.random()*cube)+1; // броски
     var div = document.createElement('div');
     part_1.appendChild(div);
@@ -92,7 +138,7 @@ for(n=1; n<res1.length; n++){
     div.innerHTML = (n<100?"&nbsp;&nbsp;":"") + (n<10?"&nbsp;&nbsp;":"")
         + "<b>" + n + "</b>" + " - " + res1[n] + " " 
         + (res1[n]<100?"&nbsp;&nbsp;":"") + (res1[n]<10?"&nbsp;&nbsp;":"")
-        + "/ рассчетное: " + Math.round(1/cube*arr1.length) + "";
+        + "/ рассчетное: " + DotToNum(Math.round(1/cube*arr1.length*100)/100) + "";
 
 }
 
@@ -205,7 +251,7 @@ for(n=1; n<mas.length; n++){
 
 var div = document.createElement('div');
 part_2.appendChild(div);
-div.innerHTML = 'Количество бросков от совпадения до <br>совпадения (повтор \'1\' из '+cube+'): ';
+div.innerHTML = 'Количество бросков от совпадения до <br>совпадения (\'1\' среди '+cube+' вариантов): ';
 
 // функция получения серии
 function throwDice(){
@@ -222,7 +268,7 @@ function throwDice(){
 
 var arr2 = [];
 
-for(var n=1; n<=1000; n++) {
+for(var n=1; n<=sequence; n++) {
     var div = document.createElement('div');
     part_2.appendChild(div);
     arr2[n-1] = throwDice();
@@ -265,7 +311,7 @@ for(n=1; n<res2.length; n++){
     div.innerHTML = (n<100?"&nbsp;&nbsp;":"") + (n<10?"&nbsp;&nbsp;":"")
         + "<b>" + n + "</b>" + " - " + res2[n] + " " 
         + (res2[n]<100?"&nbsp;&nbsp;":"") + (res2[n]<10?"&nbsp;&nbsp;":"")
-        + "/ рассчетное: " + Math.round(1/(cube-1)*Math.pow((cube-1)/cube,n-1)*arr2.length) + "";
+        + "/ рассчетное: " + DotToNum(Math.round(1/(cube-1)*Math.pow((cube-1)/cube,n-1)*arr2.length*100)/100) + "";
 }
 
 
@@ -373,6 +419,14 @@ for(n=1; n<mas.length; n++){
 }
 
 
+
+function DotToNum(x) {
+    var spc = (x<100?"&nbsp;&thinsp;":"") + (x<10?"&nbsp;&thinsp;":"");
+    if(x==Math.round(x)) { return spc + x + '.00'; }
+    else if(x==Math.round(x*10)/10) { return spc + x + '0'; }
+    else return spc + x;
+}
+
 // ------------------------------------------------------
 
 
@@ -381,6 +435,7 @@ part_2.appendChild(document.createElement('br'));
 
 setTimeout(function(){
     divG1.scrollIntoView();
+    window.scrollBy(0, -32);
 //    window.scrollTo(0, 999999);
 }, 100);
 </script>
