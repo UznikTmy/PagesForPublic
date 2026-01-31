@@ -21,12 +21,13 @@
         }
         form * {position:absolute; top:4px;}
         a#a1, a#a2, a#a3 {top:8px; }
-        a#a1 {left: 10px;}
-        a#a2 {left: 88px;}
-        a#a3 {left: 180px;}
-        input#sequence {left:260px; padding:2px; width:56px;}
-        input#cube {left:330px; padding:2px; width:30px;}
-        button {left:374px; width:56px; cursor: pointer;}
+        a#a1 {right: 172px; left:; 10px;}
+        a#a2 {right: 90px; left:; 88px;}
+        a#a3 {right: 20px; left:; 180px;}
+        input#sequence {right: 430px; left:;260px; padding:2px; width:56px;}
+        input#cube {right: 386px; left:;330px; padding:2px; width:30px;}
+        input#limit {right: 316px; left:;374px; padding:2px; width:56px;}
+        button {right: 254px; left:;444px; width:56px; cursor: pointer;}
     </style>
 
 </head>
@@ -42,6 +43,7 @@ var part_2 = document.getElementById('case2');
 
 var cube = 6; // количество граней кубика
 var sequence = 1000; // количество реализаций
+var limit = 1500; // ограничение на длину серии
 
 
 // заплатка: передаем количество граней
@@ -51,23 +53,29 @@ if(get_param[1]) {
     var param = get_param[1].split(':');
     if(param[0]) cube = parseInt(param[0]); 
     if(param[1]) sequence = parseInt(param[1]);
+    if(param[2]) limit = parseInt(param[2]);
     if(cube<2)cube=2;
+    if(limit<1)limit=1;
 }
 var form = document.createElement('form');
 var inpCube = document.createElement('input');
 var inpSeq = document.createElement('input');
+var inpLim = document.createElement('input');
 var btn = document.createElement('button');
 document.body.appendChild(form);
 form.appendChild(inpSeq);
 form.appendChild(inpCube);
+form.appendChild(inpLim);
 form.appendChild(btn);
 btn.innerHTML = ' &crarr; ';
 inpSeq.id = 'sequence';
 inpCube.id = 'cube';
+inpLim.id = 'limit';
 inpSeq.value = sequence;
 inpCube.value = cube;
+inpLim.value = limit;
 form.onsubmit = function(){
-    window.location.href = get_param[0] + '?' + inpCube.value + ':' + inpSeq.value;
+    window.location.href = get_param[0] + '?' + inpCube.value + ':' + inpSeq.value + ':' + inpLim.value;
     return false;
 }
 // добавляем кнопки прокрутки к началу страницы, графикам и в конец.
@@ -255,12 +263,12 @@ div.innerHTML = 'Количество бросков от совпадения �
 
 // функция получения серии
 function throwDice(){
-    for(var i=1; i<=1000; i++){
+    for(var i=1; i<=limit; i++){
         var rnd = Math.floor(Math.random()*cube)+1;
         if(rnd==1) 
             return i;
     }
-    return throwDice(); // если дина серии больше 1000, перезапустим ее
+    return throwDice(); // если дина серии больше {limit}, перезапустим ее
 }
 
 
@@ -287,7 +295,7 @@ part_2.appendChild(divG2);
 
 var div = document.createElement('div');
 part_2.appendChild(div);
-div.innerHTML = 'Подсчет количества одинаковых значений <br>(интервалов): ';
+div.innerHTML = 'Подсчет количества одинаковых значений <br>интервалов (ограничено длиной '+limit+'): ';
 
 var maxval = 0;
 for(n=0; n<arr2.length; n++)
@@ -313,7 +321,6 @@ for(n=1; n<res2.length; n++){
         + (res2[n]<100?"&nbsp;&nbsp;":"") + (res2[n]<10?"&nbsp;&nbsp;":"")
         + "/ рассчетное: " + DotToNum(Math.round(1/(cube-1)*Math.pow((cube-1)/cube,n-1)*arr2.length*100)/100) + "";
 }
-
 
 
 // ------------------------------------------------------
