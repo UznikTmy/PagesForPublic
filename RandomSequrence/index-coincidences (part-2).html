@@ -170,7 +170,7 @@ var div = document.createElement('div');
 part_1.appendChild(div);
 div.innerHTML = 'Подсчет количества одинаковых значений <br>('+cube+' граней): ';
 
-var res1 = new Array(maxval+1); // исключаем нулевую ячейку
+var res1 = new Array(cube+1); // исключаем нулевую ячейку
 for(n=0; n<res1.length; n++)
     res1[n]=0;                  // предустанавливаем 0, исключая NaN
 for(n=0; n<arr1.length; n++)
@@ -303,7 +303,7 @@ function throwDice(){
         if(rnd==1) 
             return i;
     }
-    return throwDice(); // если дина серии больше {limit}, перезапустим ее
+    return throwDice(); // если длина серии больше {limit}, перезапустим ее
 }
 
 
