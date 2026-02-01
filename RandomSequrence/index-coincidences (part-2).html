@@ -1,39 +1,12 @@
-<!doctype html>
+﻿<!doctype html>
 <html>
 <head>
     <meta charset="utf-8">
     <title>Desk of cards, part 2</title>
     <style type="text/css">
         body, div {font: 11px Verdana;}
-        div#case1, div#case2 {position:absolute; top:0; margin-top:40px;}
-        div#case1 {left:0; width:45%;}
-        div#case2 {left:50%; width:45%;}
-        form {
-            border-bottom:1px solid #999;
-            box-shadow: 0 0 10px 0 #999;
-            background:#FFFFFF;
-            display:block;
-            position:fixed;
-            top:0;
-            left:0;
-            width:100%; 
-            height:32px;
-        }
-        form * {position:absolute; top:4px;}
-        a#a1, a#a2, a#a3, a#a4 {top:8px; }
-        a#a1 {right: 240px;}
-        a#a2 {right: 172px;}
-        a#a3 {right: 90px;}
-        a#a4 {right: 20px;}
-        input#sequence {right: 458px; padding:2px; width:56px;}
-        input#cube {right: 414px; padding:2px; width:30px;}
-        input#limit {right: 344px; padding:2px; width:56px;}
-        input#normalize {right: 318px; top:5px; width:20px; cursor:pointer;}
-        button {right: 262px; width:56px; cursor:pointer;}
-        div#help {background:#fff; border:1px solid #999; border-radius:10px;
-            box-shadow:0 0 10px 0 #999; width:400px; height:300px;
-            position:fixed; margin-top:40px; margin-left:-215px; left:50%;
-            padding:24px; cursor:pointer; display:none;}
+        div#case1 {position:absolute; top:0; left:0; width:45%;}
+        div#case2 {position:absolute; top:0; left:50%; width:45%;}
     </style>
 
 </head>
@@ -41,126 +14,42 @@
 <body>
 <div id="case1"></div>
 <div id="case2"></div>
-
-<form id="menu">
-    <input id="sequence" value="1000" />
-    <input id="cube" value="6" />
-    <input id="limit" value="1500" />
-    <input id="normalize" type="checkbox" />
-    <button> &crarr; </button>
-    <a href="http://" id="a1" onClick="return f1();">?</a>
-    <a href="http://" id="a2" onClick="return f2();">В начало</a>
-    <a href="http://" id="a3" onClick="return f3();">На график</a>
-    <a href="http://" id="a4" onClick="return f4();">В конец</a>
-</form>
-<div id="help" onClick="this.style.display='none';">
-<b>Описание результатов:</b><br><br>
-Первая колонка содержит результаты броска кубика.<br>
-Вторая - в каком по счету броске снова выпадает <br>единица (длина серии).<br>
-<br><br>
-<b>Описание параметров:</b><br><br>
-1. Количство реализаций (бросков)<br>
-2. Количество равновероятных исходов (граней кубика)<br>
-3. Ограничение на длину серии (макс. число бросков)<br>
-4. Нормировка: по результатам/по ограничению<br>
-</div>
-
-
 <script type="text/javascript">
 // Coincidences (совпадения)
 
+var part_1 = document.getElementById('case1');
+var part_2 = document.getElementById('case2');
+
+
 var cube = 6; // количество граней кубика
-var sequence = 1000; // количество реализаций
-var limit = 1500; // ограничение на длину серии
-var norm = 0; // нормализация по max/limit
 
-
-// меню: передаем в код количество граней
-
-var form = document.getElementById('menu');
-var inpCube = document.getElementById('cube');
-var inpSeq = document.getElementById('sequence');
-var inpLim = document.getElementById('limit');
-var inpNorm = document.getElementById('normalize');
-
-// прасим строку запроса, забираем параметры в код
-var get_param = window.location.href.split('?');
-if(get_param[1]) {
-    var param = get_param[1].split(':');
-    if(param[0]) cube = parseInt(param[0]); 
-    if(param[1]) sequence = parseInt(param[1]);
-    if(param[2]) limit = parseInt(param[2]);
-    if(param[3]) norm = parseInt(param[3]);
-    if(cube<2)cube=2;
-    if(limit<1)limit=1;
-}
-inpSeq.value = sequence;
-inpCube.value = cube;
-inpLim.value = limit;
-inpNorm.checked = norm;
-
-// формируем строку запроса, подставляем параметры из формы
-form.onsubmit = function(){
-    window.location.href = window.location.href.split('?')[0] 
-        + '?' + inpCube.value + ':' + inpSeq.value 
-        + ':' + inpLim.value + ':' + (inpNorm.checked?'1':'0'); 
-    return false;
-}
-
-// для элементов навигации
-function f1(){
-    var idHelp = document.getElementById('help').style; 
-    idHelp.display = (idHelp.display=='block') ? 'none' : 'block';
-    return false;
-}
-function f2(){
-    window.scroll(0,0);
-    return false;
-}
-function f3(){
-    divG1.scrollIntoView();
-    window.scrollBy(0, -32);
-    return false;
-}
-function f4(){
-    window.scrollTo(0, 999999);
-    return false;
-}
-
-// конец меню
-
-
-
-var part_1 = document.getElementById('case1'); // колонка вывода 1
-var part_2 = document.getElementById('case2'); // колонка вывода 2
-
-
-// ======== колонка 1: нормальное распределение =========
 
 // создаем нормальное распределение случайных значений
 // и выводим таблицу результатов
-
 var div = document.createElement('div');
 part_1.appendChild(div);
-div.innerHTML = 'Случайные значения, выпавшие на <br>кубике ('+cube+' граней): ';
+div.innerHTML = 'Случайные значения, выпавшие на <br>кубике: ';
 
 var arr1 = [];
-for(var n=1; n<=sequence; n++){
+for(var n=1; n<=1000; n++){
     arr1[n-1] = Math.floor(Math.random()*cube)+1; // броски
     var div = document.createElement('div');
     part_1.appendChild(div);
     div.innerHTML = (n<1000?"&nbsp;&nbsp;":"") + (n<100?"&nbsp;&nbsp;":"") + (n<10?"&nbsp;&nbsp;":"")
         + "<b>" + n + "</b>" + ". " + arr1[n-1];
 }
+
+
+var divG1 = document.createElement('div');
+part_1.appendChild(divG1);
+//divG1.innerHTML = '--------------------';
+
+
 // определяем масксимальное случайное значение
+
 var maxval = 0;
 for(n=0; n<arr1.length; n++)
     if(arr1[n]>maxval)maxval=arr1[n];
-
-
-var divG1 = document.createElement('div'); // блок для графика
-part_1.appendChild(divG1);
-
 
 
 // выполняем подсчет: сколько раз выпало каждое из значений
@@ -168,9 +57,9 @@ part_1.appendChild(divG1);
 
 var div = document.createElement('div');
 part_1.appendChild(div);
-div.innerHTML = 'Подсчет количества одинаковых значений <br>('+cube+' граней): ';
+div.innerHTML = 'Подсчет количества одинаковых значений: ';
 
-var res1 = new Array(cube+1); // исключаем нулевую ячейку
+var res1 = new Array(maxval+1); // исключаем нулевую ячейку
 for(n=0; n<res1.length; n++)
     res1[n]=0;                  // предустанавливаем 0, исключая NaN
 for(n=0; n<arr1.length; n++)
@@ -185,7 +74,7 @@ for(n=1; n<res1.length; n++){
     div.innerHTML = (n<100?"&nbsp;&nbsp;":"") + (n<10?"&nbsp;&nbsp;":"")
         + "<b>" + n + "</b>" + " - " + res1[n] + " " 
         + (res1[n]<100?"&nbsp;&nbsp;":"") + (res1[n]<10?"&nbsp;&nbsp;":"")
-        + "/ рассчетное: " + NumToString(Math.round(1/cube*arr1.length*100)/100) + "";
+        + "/ рассчетное: " + Math.round(1/6*arr1.length) + "";
 
 }
 
@@ -201,7 +90,7 @@ var mas = res1; // [0, 1, 3, 2];
 var theory = []; // создаем массив теоретических значений значений
 
 for(n=0; n<mas.length; n++){
-    theory[n] = 1/cube * arr1.length;
+    theory[n] = 1/6 * arr1.length;
 }
 
 // создаем холст и настраиваем параемтры вывода
@@ -236,14 +125,18 @@ contextID.lineTo(canvasID.width-mX, canvasID.height-10.5-mY);
 contextID.strokeStyle = '#000';
 contextID.stroke();
 
+// рабочая область: 
+// canvasID.width-2*mX-2*10 = 250 и 
+// canvasID.height-2*mY-2*10 = 150
+
 
 // проходим по массиву и выводим его значения в виде точек
 // получаем диапазон значений
 var maxX = mas.length;
 var maxY = 0; for(n=0; n<mas.length; n++) if(mas[n]>maxY) maxY=mas[n];
 // вычисляем коэффициенты масштабирования
-var kX = (canvasID.width - 2*mX - 10)/maxX;
-var kY = (canvasID.height - 2*mY - 2*10)/maxY;
+var kX = (canvasID.width - 2*mX - 10)/maxX; /// = 250/1000
+var kY = (canvasID.height - 2*mY - 2*10)/maxY; /// = 150/6
 // обходим массив и рисуем точки
 var xLast, yLast1, yLast2;
 for(n=1; n<mas.length; n++){
@@ -286,55 +179,55 @@ for(n=1; n<mas.length; n++){
 }
 
 
+// ------------------------------------------------------
 
-// ======== колонка 2: сходящееся распределение =========
 
 // создаем массив случайных значений - длин серий
-// (генерируем массив случайный значений для совпадений)
+// генерируем массив случайный значений для совпадений
 
 var div = document.createElement('div');
 part_2.appendChild(div);
-div.innerHTML = 'Количество бросков от совпадения до <br>совпадения (\'1\' среди '+cube+' вариантов): ';
+div.innerHTML = 'Количество бросков от совпадения до <br>совпадения: ';
 
 // функция получения серии
 function throwDice(){
-    for(var i=1; i<=limit; i++){
+    for(var i=1; i<=1000; i++){
         var rnd = Math.floor(Math.random()*cube)+1;
         if(rnd==1) 
             return i;
     }
-    return throwDice(); // если длина серии больше {limit}, перезапустим ее
+    return throwDice(); // если дина серии больше 1000, перезапустим ее
 }
 
 
 // генерирум последовательность серий, получая ряд числовых значений в массив
-// и выводим результаты генерации
 
 var arr2 = [];
 
-for(var n=1; n<=sequence; n++) {
+for(var n=1; n<=1000; n++) {
     var div = document.createElement('div');
     part_2.appendChild(div);
     arr2[n-1] = throwDice();
     div.innerHTML = (n<1000?"&nbsp;&nbsp;":"") + (n<100?"&nbsp;&nbsp;":"") + (n<10?"&nbsp;&nbsp;":"")
         + "<b>" + n + "</b>" + ". " + arr2[n-1];
 }
-// определяем масксимальное случайное значение (для создания таблицы результатов)
-var maxval = 0;
-for(n=0; n<arr2.length; n++)
-    if(arr2[n]>maxval)maxval=arr2[n];
 
 
-
-var divG2 = document.createElement('div'); // блок для графика
+var divG2 = document.createElement('div');
 part_2.appendChild(divG2);
+//divG2.innerHTML += '--------------------';
 
 
 // обрабатываем результаты: подсчитаем количество выпавших значений
+// определяем масксимальное случайное значение (для создания таблицы результатов)
 
 var div = document.createElement('div');
 part_2.appendChild(div);
-div.innerHTML = 'Подсчет количества одинаковых значений <br>интервалов (ограничено длиной '+limit+'): ';
+div.innerHTML = 'Подсчет количества одинаковых значений: ';
+
+var maxval = 0;
+for(n=0; n<arr2.length; n++)
+    if(arr2[n]>maxval)maxval=arr2[n];
 
 
 // создаем массив для хранения результатов, и заполним его
@@ -354,8 +247,9 @@ for(n=1; n<res2.length; n++){
     div.innerHTML = (n<100?"&nbsp;&nbsp;":"") + (n<10?"&nbsp;&nbsp;":"")
         + "<b>" + n + "</b>" + " - " + res2[n] + " " 
         + (res2[n]<100?"&nbsp;&nbsp;":"") + (res2[n]<10?"&nbsp;&nbsp;":"")
-        + "/ рассчетное: " + NumToString(Math.round(1/(cube-1)*Math.pow((cube-1)/cube,n-1)*arr2.length*100)/100) + "";
+        + "/ рассчетное: " + Math.round(1/5*Math.pow(5/6,n-1)*arr2.length) + "";
 }
+
 
 
 // ------------------------------------------------------
@@ -364,12 +258,14 @@ for(n=1; n<res2.length; n++){
 // строим график для отображения распределения случайных величин
 // так же выведем на график расчетные функции
 
+// вызываем функцию, которая отображает массив на графике, выводя все значения
+
 var mas = res2; // [0, 1, 3, 2];
 var theory = []; // создаем массив теоретических значений значений
 
 theory[0] = 0;
 for(n=1; n<mas.length; n++){
-    theory[n] = 1/(cube-1) * Math.pow((cube-1)/cube, n-1) * arr2.length;
+    theory[n] = 1/5 * Math.pow(5/6, n-1) * arr2.length;
 }
 
 // создаем холст и настраиваем параемтры вывода
@@ -403,6 +299,10 @@ contextID.lineTo(canvasID.width-mX, canvasID.height-10.5-mY);
 contextID.strokeStyle = '#000';
 contextID.stroke();
 
+// рабочая область: 
+// canvasID.width-2*mX-2*10 = 250 и 
+// canvasID.height-2*mY-2*10 = 150
+
 
 // проходим по массиву и выводим его значения в виде точек
 // получаем диапазон значений
@@ -411,9 +311,8 @@ var maxY = 0;
 for(n=0; n<mas.length; n++) if(mas[n]>maxY) maxY=mas[n];
 for(n=0; n<theory.length; n++) if(theory[n]>maxY) maxY=theory[n];
 // вычисляем коэффициенты масштабирования
-var kX = !norm ? (canvasID.width - 2*mX - 10)/maxX :
-    (canvasID.width - 2*mX - 10)/limit;
-var kY = (canvasID.height - 2*mY - 2*10)/maxY;
+var kX = (canvasID.width - 2*mX - 10)/maxX; /// = 250/1000
+var kY = (canvasID.height - 2*mY - 2*10)/maxY; /// = 150/6
 // обходим массив и рисуем точки
 var xLast, yLast1, yLast2;
 for(n=1; n<mas.length; n++){
@@ -455,27 +354,15 @@ for(n=1; n<mas.length; n++){
     xLast = x;
 }
 
-// ======================================================
-
-
-function NumToString(x) { // 10 -> 10.00
-    var spc = (x<100?"&nbsp;&thinsp;":"") + (x<10?"&nbsp;&thinsp;":"");
-    if(x==Math.round(x)) { return spc + x + '.00'; }
-    else if(x==Math.round(x*10)/10) { return spc + x + '0'; }
-    else return spc + x;
-}
 
 // ------------------------------------------------------
 
 
-for(i=0;i<4;i++){
-    part_1.appendChild(document.createElement('br'));
-    part_2.appendChild(document.createElement('br'));
-}
+part_1.appendChild(document.createElement('br'));
+part_2.appendChild(document.createElement('br'));
 
 setTimeout(function(){
     divG1.scrollIntoView();
-    window.scrollBy(0, -32);
 //    window.scrollTo(0, 999999);
 }, 100);
 </script>
