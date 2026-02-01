@@ -1,0 +1,136 @@
+﻿<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Создвездия</title>
+    <style type="text/css">
+        body {font: 11px Verdana;}
+    </style>
+</head>
+
+<body>
+<b>Имитация звездных скоплений</b><br />
+(клик по области - перерисовка)
+
+<script type="text/javascript">
+// Constellations (созвездия)
+
+var maxStars = 15, minStars = 0; // количество звезд в четверти
+var cube = 30; // параметр генерации: кол-во граней кубика
+var limit = 250; // параметр генерации: макс. длина серии бросков
+
+
+// функция генерации случайного значения
+
+function throwDice() {
+    for(var i=1; i<=limit; i++) {
+        var rnd = Math.floor(Math.random()*cube)+1;
+        if(rnd==1) // получив '1', возвращаем случайную величину
+            return i;
+    }
+    return throwDice(); // если длина серии больше {limit}, перезапустим ее
+}
+
+
+// массив координат
+
+var arr = [], i;
+function generateSky() {
+	arr = new Array();
+	var quarter = [ // кол-во звезд в каждой четверти
+		Math.floor(Math.random()*(maxStars - minStars)) + minStars,
+		Math.floor(Math.random()*(maxStars - minStars)) + minStars,
+		Math.floor(Math.random()*(maxStars - minStars)) + minStars,
+		Math.floor(Math.random()*(maxStars - minStars)) + minStars
+	];
+	for(i=0; i<quarter[0]; i++)
+		arr[arr.length] = {x:throwDice(), y:throwDice()};
+	for(i=0; i<quarter[1]; i++)
+		arr[arr.length] = {x:(-1)*throwDice(), y:throwDice()}
+	for(i=0; i<quarter[2]; i++)
+		arr[arr.length] = {x:throwDice(), y:(-1)*throwDice()}
+	for(i=0; i<quarter[3]; i++)
+		arr[arr.length] = {x:(-1)*throwDice(), y:(-1)*throwDice()}
+}
+
+generateSky();
+
+
+
+// == графическое отображение ==
+
+// добавление и настройка канвы
+
+var canvasID = document.createElement('canvas');
+var contextID = canvasID.getContext('2d');
+document.body.appendChild(canvasID);
+canvasID.width = 500;
+canvasID.height = 500;
+with (canvasID.style) {
+	position = 'absolute';
+	left = window.innerWidth / 2 + 'px';
+	top = window.innerHeight / 2 + 'px';
+	marginTop = -1 * canvasID.height / 2 + 'px';
+	marginLeft = -1 * canvasID.width / 2 + 'px';
+	boxShadow = '0 0 10px 0 #999';
+	borderRadius = '10px';
+}
+
+
+// вывод массива в виде точек
+
+function grawSky() {
+	contextID.fillStyle = '#101010';
+	contextID.fillRect(0, 0, canvasID.width, canvasID.height);
+
+	var Xc = canvasID.width / 2;
+	var Yc = canvasID.width / 2;
+
+	for (var n=0; n<arr.length; n++) {
+	    var x, y, r = 2;
+	    x = Xc + arr[n].x;
+	    y = Yc - arr[n].y;
+	    contextID.beginPath();
+	    contextID.arc(x, y, r, 0, 2*Math.PI, false);
+	    contextID.closePath();
+	    contextID.fillStyle = '#ffffff';
+	    contextID.fill();
+	}
+}
+
+grawSky();
+
+
+// перерисовка по клику
+
+canvasID.onmousedown = function() {
+	generateSky();
+	grawSky();
+};
+
+
+// позиционирование канвы
+
+window.onresize = function() {
+	with (canvasID.style) {
+		left = window.innerWidth / 2 + 'px';
+		top = window.innerHeight / 2 + 'px';
+		marginTop = -1 * canvasID.height / 2 + 'px';
+		marginLeft = -1 * canvasID.width / 2 + 'px';
+	}
+}
+
+
+/*
+// численный вывод
+for(i=0;i<arr.length;i++) {
+	var div = document.createElement('div');
+	document.body.appendChild(div);
+	div.innerHTML = 'x: ' + arr[i].x + ', y: ' + arr[i].y;
+}
+*/
+
+</script>
+
+</body>
+</html>
