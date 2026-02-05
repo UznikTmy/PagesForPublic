@@ -432,6 +432,7 @@ const updateLayout = () => {
             return g;
         }
         function renderRoom(id) {
+	        window.currentStateId = id;
             if (state.isEventActive) return;
             const room = rooms[id] || rooms["start"];
             const titleEl = document.getElementById('room_title');
@@ -462,5 +463,6 @@ const updateLayout = () => {
 ]]></script>
 
 </svg>
+
 
 
