@@ -1,15 +1,16 @@
-﻿<svg viewBox="0 0 800 600" preserveAspectRatio="xMidYMax meet" xmlns="http://www.w3.org/2000/svg" style="width: 100vw; height: 100vh; position: absolute; bottom: 0; left: 0;">
+<svg viewBox="0 0 800 600" preserveAspectRatio="xMidYMax meet" xmlns="http://www.w3.org/2000/svg" style="width: 100vw; height: 100vh; position: absolute; bottom: 0; left: 0;">
   <rect id="bg" x="-400" y="-1000" width="1600" height="2000" fill="#12151a" />
-  <rect y="400" width="800" height="200" fill="#0d0d0d" stroke="#222" stroke-width="1" />
   
-  <foreignObject x="40" y="420" width="720" height="110">
-    <div xmlns="http://www.w3.org/1999/xhtml" style="color: #a0a0a0; font-family: 'Verdana', sans-serif; font-size: 13px; line-height: 1.6;">
-      <strong id="room_title" style="font-size: 16px; display: block; margin-bottom: 5px; color: #ccc; border-bottom: 1px solid #1a1a1a; padding-bottom: 3px;">ЛОКАЦИЯ</strong>
+  <rect y="300" width="800" height="300" fill="rgba(13, 13, 13, 0.85)" stroke="#222" stroke-width="1" />
+  
+  <foreignObject x="40" y="320" width="720" height="240">
+    <div xmlns="http://www.w3.org/1999/xhtml" style="color: #a0a0a0; font-family: 'Verdana', sans-serif; font-size: 16px; line-height: 1.5;">
+      <strong id="room_title" style="font-size: 22px; display: block; margin-bottom: 10px; color: #fff; border-bottom: 2px solid #333; padding-bottom: 5px; text-transform: uppercase;">ЛОКАЦИЯ</strong>
       <div id="room_desc">Текст загружается...</div>
     </div>
   </foreignObject>
 
-  <g id="choices" transform="translate(40, 545)"></g>
+  <g id="choices" transform="translate(40, 480)"></g>
 
   <script><![CDATA[
 	// Добавляем проверку, чтобы код не "падал" вне Telegram
@@ -375,11 +376,12 @@
     function createButton(text, index) {
         const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
         g.setAttribute("cursor", "pointer");
-        g.innerHTML = `<rect x="${(index % 3) * 250}" y="${Math.floor(index / 3) * 45}" width="230" height="32" rx="2" fill="#1a1d22" stroke="#333"/>
-                       <text x="${(index % 3) * 250 + 115}" y="${Math.floor(index / 3) * 45 + 20}" text-anchor="middle" fill="#888" font-family="Verdana" font-size="11">${text}</text>`;
+        // Увеличили ширину до 230 и высоту до 45, шрифт до 14
+        g.innerHTML = `<rect x="${(index % 3) * 245}" y="${Math.floor(index / 3) * 55}" width="235" height="45" rx="5" fill="#1a1d22" stroke="#444" stroke-width="1.5"/>
+                       <text x="${(index % 3) * 245 + 117}" y="${Math.floor(index / 3) * 55 + 28}" text-anchor="middle" fill="#ccc" font-family="Verdana" font-size="14" font-weight="bold">${text}</text>`;
         return g;
     }
-
+	  
     function renderRoom(id) {
       if (state.isEventActive) return;
       const room = rooms[id] || rooms["start"];
@@ -396,4 +398,5 @@
 
     renderRoom("start");
   ]]></script>
+
 </svg>
