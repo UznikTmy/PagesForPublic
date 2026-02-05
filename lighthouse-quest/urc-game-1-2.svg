@@ -375,7 +375,7 @@
                        <text x="${(index % 3) * 245 + 117}" y="${Math.floor(index / 3) * 50 + 26}" text-anchor="middle" fill="#aaa" font-family="Verdana" font-size="13" font-weight="bold">${text}</text>`;
         return g;
     }
-
+	  
     function renderRoom(id) {
       if (state.isEventActive) return;
       const room = rooms[id] || rooms["start"];
