@@ -18,33 +18,43 @@
         
         // 1. Настройка размеров (делаем это сразу)
         const svg = document.querySelector('svg');
-        const updateLayout = () => {
+const updateLayout = () => {
             const w = window.innerWidth;
             const h = window.innerHeight;
+            const isLandscape = w > h; // Проверка ориентации
+
             svg.setAttribute("viewBox", `0 0 ${w} ${h}`);
             
-            // Находим элементы интерфейса
             const plate = document.getElementById('ui-plate');
             const textBox = document.querySelector('foreignObject');
             const choicesG = document.getElementById('choices');
 
             if (plate && textBox && choicesG) {
-                const uiHeight = h * 0.55;
-                const uiY = h - uiHeight;
+                // В горизонтальном режиме панель занимает 70% высоты, но она сама меньше
+                // В вертикальном оставляем 15% снизу под навигацию телефона
+                const uiHeight = isLandscape ? h * 0.8 : h * 0.5;
+                const safeMargin = isLandscape ? 10 : 60; // Отступ снизу
+                const uiY = h - uiHeight - safeMargin;
                 
                 plate.setAttribute("width", w);
-                plate.setAttribute("height", uiHeight + 100);
+                plate.setAttribute("height", uiHeight + 200);
                 plate.setAttribute("y", uiY);
 
+                // Текстовая область
                 textBox.setAttribute("x", 20);
-                textBox.setAttribute("y", uiY + 20);
+                textBox.setAttribute("y", uiY + 15);
                 textBox.setAttribute("width", w - 40);
-                textBox.setAttribute("height", uiHeight * 0.5);
+                // В горизонтальном режиме сильно ограничиваем высоту текста
+                textBox.setAttribute("height", isLandscape ? uiHeight * 0.4 : uiHeight * 0.5);
                 
-                choicesG.setAttribute("transform", `translate(20, ${h - (uiHeight * 0.35)})`);
+                // Смещаем кнопки: в Landscape они выше, в Portrait ниже
+                const buttonsY = h - safeMargin - (isLandscape ? uiHeight * 0.4 : uiHeight * 0.35);
+                choicesG.setAttribute("transform", `translate(20, ${buttonsY})`);
+                
+                // Перерисовываем кнопки при изменении экрана
+                if (typeof currentStateId !== 'undefined') renderRoom(currentStateId);
             }
         };
-
         updateLayout();
         window.addEventListener('resize', updateLayout);
 
@@ -399,25 +409,28 @@
         btnGroup.appendChild(g);
     }
 
-	//
-        // 3. Вспомогательные функции
         function createButton(text, index) {
             const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
             g.setAttribute("cursor", "pointer");
+            
             const screenW = window.innerWidth;
-            const colCount = screenW < 500 ? 1 : 2;
-            const btnWidth = (screenW - 40 - (colCount - 1) * 15) / colCount;
-            const btnHeight = 45;
-            const x = (index % colCount) * (btnWidth + 15);
-            const y = Math.floor(index / colCount) * (btnHeight + 10);
+            const isLandscape = screenW > window.innerHeight;
+            
+            // В вертикальном режиме - 1 колонка (на всю ширину)
+            // В горизонтальном - 2 колонки
+            const colCount = isLandscape ? 2 : 1;
+            const btnWidth = (screenW - 40 - (colCount - 1) * 10) / colCount;
+            const btnHeight = isLandscape ? 35 : 45; // В горизонте кнопки чуть ниже
+            
+            const x = (index % colCount) * (btnWidth + 10);
+            const y = Math.floor(index / colCount) * (btnHeight + 8);
 
             g.innerHTML = `
-                <rect x="${x}" y="${y}" width="${btnWidth}" height="${btnHeight}" rx="8" fill="#1e2229" stroke="#555" stroke-width="1.2"/>
-                <text x="${x + btnWidth/2}" y="${y + 28}" text-anchor="middle" fill="#fff" font-family="Verdana" font-size="14" font-weight="bold">${text}</text>
+                <rect x="${x}" y="${y}" width="${btnWidth}" height="${btnHeight}" rx="6" fill="#1e2229" stroke="#555" stroke-width="1.2"/>
+                <text x="${x + btnWidth/2}" y="${y + (btnHeight/2 + 5)}" text-anchor="middle" fill="#fff" font-family="Verdana" font-size="${isLandscape ? 12 : 14}" font-weight="bold">${text}</text>
             `;
             return g;
         }
-
         function renderRoom(id) {
             if (state.isEventActive) return;
             const room = rooms[id] || rooms["start"];
@@ -449,4 +462,5 @@
 ]]></script>
 
 </svg>
+
 
