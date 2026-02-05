@@ -1,3 +1,17 @@
+<svg id="game-svg" xmlns="http://www.w3.org/2000/svg" style="width: 100vw; height: 100vh; background: #12151a;">
+  <rect id="bg" x="-2000" y="-2000" width="4000" height="4000" fill="#12151a" />
+  
+  <g id="ui-layer">
+    <rect id="ui-plate" fill="rgba(10, 10, 10, 0.95)" stroke="#333" stroke-width="1" />
+    <foreignObject id="ui-text-box">
+      <div xmlns="http://www.w3.org/1999/xhtml" style="color: #b0b0b0; font-family: 'Verdana', sans-serif; line-height: 1.4;">
+        <strong id="room_title" style="display: block; color: #fff; border-bottom: 2px solid #444; text-transform: uppercase;">ЛОКАЦИЯ</strong>
+        <div id="room_desc">Загрузка...</div>
+      </div>
+    </foreignObject>
+    <g id="choices"></g>
+  </g>
+	
 <script><![CDATA[
     // Ждем полной загрузки DOM, чтобы элементы гарантированно существовали
     window.addEventListener('load', () => {
@@ -435,3 +449,4 @@
 ]]></script>
 
 </svg>
+
