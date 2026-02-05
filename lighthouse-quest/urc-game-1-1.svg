@@ -86,8 +86,21 @@
 		},
 		choices: () => {
 		  let c = [];
-		  if (!state.hasLamp) c.push({ text: "Взять лампу", action: () => { state.hasLamp = true; renderRoom("start"); } });
-		  if (!state.hasPin) c.push({ text: "Выдернуть штырь", action: () => { state.hasPin = true; renderRoom("start"); } });
+		  if (!state.hasLamp) {
+  		    c.push({ 
+			  text: "Взять лампу", 
+  			  action: () => { state.hasLamp = true; }, 
+			  next: "start" 
+		    });
+		  }
+
+		  if (!state.hasPin) {
+		    c.push({ 
+ 			  text: "Выдернуть штырь", 
+			  action: () => { state.hasPin = true; }, 
+			  next: "start" 
+		    });
+		  }
 		  c.push({ text: "Выбраться наружу", next: "deck" });
 		  return c;
 		}
@@ -101,7 +114,7 @@
 		choices: () => {
 		  let c = [];
 		  if (state.hasPin && !state.pinInstalled) {
-			c.push({ text: "Вставить штырь в щель", action: () => { state.pinInstalled = true; renderRoom("wall_inspect"); } });
+			c.push({ text: "Вставить штырь в щель", action: () => { state.pinInstalled = true; }, next: "wall_inspect" });
 		  }
 		  if (state.pinInstalled) {
 			c.push({ text: "Взобраться к окну", next: "window_view" });
@@ -186,13 +199,16 @@
           if (!state.doorOpened) {
               if (state.hasTweezers) c.push({ text: "Использовать пинцет", next: "unlocking" });
               if (state.knowsAboutStone && !state.hasTweezers) c.push({ text: "Обыскать порог", next: "door_threshold_search" });
-              if (state.hasLamp && !state.heardScream) {
-                c.push({ text: "Присмотреться к замку", action: () => { 
-                    state.inspectCount++;
-                    if (state.inspectCount >= 2) triggerScream();
-                    else renderRoom("door_inspect");
-                }});
-              }
+			  if (state.hasLamp && !state.heardScream) {
+				c.push({ 
+					text: "Присмотреться к замку", 
+					action: () => { 
+						state.inspectCount++; 
+					}, 
+					// Используем функцию для определения пути:
+					next: state.inspectCount + 1 >= 2 ? null : "door_inspect"
+				});
+			  }
               c.push({ text: "Ударить плечом", next: "door_shoulder" });
           } else {
               c.push({ text: "Войти внутрь", next: "entrance" });
@@ -254,7 +270,13 @@
 	    choices: () => {
 	      let c = [];
 	      if (!state.hasAxe) {
-	          c.push({ text: "Взять топор", action: () => { state.hasAxe = true; renderRoom("search_lobby"); } });
+			  c.push({ 
+				text: "Взять топор", 
+				action: () => { 
+					state.hasAxe = true; 
+				}, 
+				next: "search_lobby" 
+			  });
 	      }
 	      c.push({ text: "Вернуться в вестибюль", next: "entrance" });
 	      return c;
@@ -295,10 +317,15 @@
 	      if (!state.girlFreed) {
 	          // Использование топора для освобождения
 	          if (state.hasAxe) {
-	              c.push({ text: "Перерубить цепь топором", action: () => { state.girlFreed = true; state.isPursued = true; renderRoom("girl_cell"); } });
-	          }
-	          // Попытка освободить без инструмента - потеря времени
-	          c.push({ text: "Пытаться сорвать замок руками", next: "death_too_slow" });
+				c.push({ 
+					text: "Перерубить цепь топором", 
+					action: () => { 
+						state.girlFreed = true; 
+						state.isPursued = true; 
+					}, 
+					next: "girl_cell" 
+				});	          }
+	            c.push({ text: "Пытаться сорвать замок руками", next: "death_too_slow" });
 	      } else {
 	          c.push({ text: "Бежать к лестнице!", next: "chase_stairs" });
 	      }
@@ -404,11 +431,15 @@
         desc.innerHTML = "<span style='color:#fff; font-weight:bold;'>ОГЛУШИТЕЛЬНЫЙ КРИК! <br/><br/>Женский голос, полный боли, разрывает тишину. Затем всё смолкает.</span>";
         btnGroup.innerHTML = "";
         const g = createButton("Опомниться...", 0);
-        g.onclick = () => {
-            state.heardScream = true;
-            state.isEventActive = false;
-            renderRoom("door_inspect");
-        };
+		g.onclick = (e) => {
+			if (e) e.stopPropagation();
+
+			state.heardScream = true;
+			state.isEventActive = false;
+
+			window.currentStateId = "door_inspect"; 
+			renderRoom("door_inspect");
+		};
         btnGroup.appendChild(g);
     }
 
