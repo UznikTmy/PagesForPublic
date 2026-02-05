@@ -6,40 +6,48 @@
     <foreignObject id="ui-text-box">
       <div xmlns="http://www.w3.org/1999/xhtml" style="color: #b0b0b0; font-family: 'Verdana', sans-serif; line-height: 1.4;">
         <strong id="room_title" style="display: block; color: #fff; border-bottom: 2px solid #444; text-transform: uppercase;">ЛОКАЦИЯ</strong>
-        <div id="room_desc">Текст загружается...</div>
+        <div id="room_desc">Загрузка...</div>
       </div>
     </foreignObject>
     <g id="choices"></g>
   </g>
 
   <script><![CDATA[
-    // Настройка экрана под пропорции устройства
-    const svg = document.getElementById('game-svg');
-    const w = window.innerWidth;
-    const h = window.innerHeight;
-    svg.setAttribute("viewBox", `0 0 ${w} ${h}`);
+function updateLayout() {
+        const svg = document.getElementById('game-svg');
+        const plate = document.getElementById('ui-plate');
+        const textBox = document.getElementById('ui-text-box');
+        const choicesG = document.getElementById('choices');
 
-    // Настраиваем размеры интерфейса динамически
-    const plate = document.getElementById('ui-plate');
-    const textBox = document.getElementById('ui-text-box');
-    const choicesG = document.getElementById('choices');
-    const uiLayer = document.getElementById('ui-layer');
+        const w = window.innerWidth;
+        const h = window.innerHeight;
+        svg.setAttribute("viewBox", `0 0 ${w} ${h}`);
 
-    // Интерфейс занимает нижние 60% экрана
-    const uiHeight = h * 0.6;
-    const uiY = h - uiHeight;
-    
-    plate.setAttribute("width", w);
-    plate.setAttribute("height", uiHeight);
-    plate.setAttribute("y", uiY);
+        const uiHeight = h * 0.55; 
+        const uiY = h - uiHeight;
+        
+        plate.setAttribute("width", w);
+        plate.setAttribute("height", uiHeight + 100);
+        plate.setAttribute("y", uiY);
 
-    textBox.setAttribute("x", 20);
-    textBox.setAttribute("y", uiY + 20);
-    textBox.setAttribute("width", w - 40);
-    textBox.setAttribute("height", uiHeight * 0.6);
-    textBox.firstChild.style.fontSize = (w < 500) ? "18px" : "22px"; // Адаптивный шрифт
+        textBox.setAttribute("x", 20);
+        textBox.setAttribute("y", uiY + 20);
+        textBox.setAttribute("width", w - 40);
+        textBox.setAttribute("height", uiHeight * 0.5);
+        textBox.firstChild.style.fontSize = (w < 500) ? "17px" : "20px";
 
-    choicesG.setAttribute("transform", `translate(20, ${h - (uiHeight * 0.35)})`);
+        choicesG.setAttribute("transform", `translate(20, ${h - (uiHeight * 0.4)})`);
+    }
+
+    window.addEventListener('load', () => {
+        updateLayout();
+        window.addEventListener('resize', updateLayout);
+        
+        // ВАЖНО: Вызываем отрисовку только здесь!
+        if (typeof renderRoom === "function") {
+            renderRoom("start");
+        }
+    });
 
     let state = {
 		hasLamp: false,
@@ -396,40 +404,42 @@
     }
 
     function createButton(text, index) {
-        const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
-        g.setAttribute("cursor", "pointer");
-        
-        const screenW = window.innerWidth;
-        const colCount = screenW < 500 ? 1 : 2; // 1 колонка на узких телефонах, 2 на планшетах
-        const btnWidth = (screenW - 40 - (colCount - 1) * 15) / colCount;
-        const btnHeight = 45;
-        
-        const x = (index % colCount) * (btnWidth + 15);
-        const y = Math.floor(index / colCount) * (btnHeight + 10);
+          const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
+          g.setAttribute("cursor", "pointer");
+          const screenW = window.innerWidth;
+          const colCount = screenW < 500 ? 1 : 2;
+          const btnWidth = (screenW - 40 - (colCount - 1) * 15) / colCount;
+          const btnHeight = 45;
+          const x = (index % colCount) * (btnWidth + 15);
+          const y = Math.floor(index / colCount) * (btnHeight + 10);
 
-        g.innerHTML = `
-            <rect x="${x}" y="${y}" width="${btnWidth}" height="${btnHeight}" rx="8" fill="#1e2229" stroke="#555" stroke-width="1.5"/>
-            <text x="${x + btnWidth/2}" y="${y + 28}" text-anchor="middle" fill="#fff" font-family="Verdana" font-size="14" font-weight="bold">${text}</text>
-        `;
-        return g;
-    }
+          g.innerHTML = `
+              <rect x="${x}" y="${y}" width="${btnWidth}" height="${btnHeight}" rx="8" fill="#1e2229" stroke="#555" stroke-width="1.2"/>
+              <text x="${x + btnWidth/2}" y="${y + 28}" text-anchor="middle" fill="#fff" font-family="Verdana" font-size="14" font-weight="bold">${text}</text>
+          `;
+          return g;
+        }
 
     function renderRoom(id) {
-      if (state.isEventActive) return;
-      const room = rooms[id] || rooms["start"];
-      document.getElementById('room_title').textContent = room.title;
-      document.getElementById('room_desc').innerHTML = room.desc;
-      const btnGroup = document.getElementById('choices');
-      btnGroup.innerHTML = "";
-      room.choices().forEach((c, i) => {
-        const g = createButton(c.text, i);
-        g.onclick = () => { if (c.action) c.action(); if (c.next) renderRoom(c.next); };
-        btnGroup.appendChild(g);
-      });
+        const room = rooms[id] || rooms["start"];
+        document.getElementById('room_title').textContent = room.title;
+        document.getElementById('room_desc').innerHTML = (typeof room.desc === 'function' ? room.desc() : room.desc);
+        
+        const btnGroup = document.getElementById('choices');
+        btnGroup.innerHTML = "";
+        
+        room.choices().forEach((choice, i) => {
+            const btn = createButton(choice.text, i);
+            btn.onclick = () => {
+                if (choice.action) choice.action();
+                renderRoom(choice.next);
+            };
+            btnGroup.appendChild(btn);
+        });
+        if (room.action) room.action();
     }
 
-    renderRoom("start");
+//    renderRoom("start");
   ]]></script>
 
 </svg>
-
