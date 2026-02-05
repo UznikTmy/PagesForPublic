@@ -546,14 +546,14 @@
             // В горизонтальном - 2 колонки
             const colCount = isLandscape ? 2 : 1;
             const btnWidth = (screenW - 40 - (colCount - 1) * 10) / colCount;
-            const btnHeight = isLandscape ? 35 : 65; // В горизонте кнопки чуть ниже
+            const btnHeight = isLandscape ? 65 : 45; // В горизонте кнопки чуть ниже
             
             const x = (index % colCount) * (btnWidth + 10);
             const y = Math.floor(index / colCount) * (btnHeight + 8);
 
             g.innerHTML = `
                 <rect x="${x}" y="${y}" width="${btnWidth}" height="${btnHeight}" rx="6" fill="#1e2229" stroke="#555" stroke-width="1.2"/>
-                <text x="${x + btnWidth/2}" y="${y + (btnHeight/2 + 5)}" text-anchor="middle" fill="#fff" font-family="Verdana" font-size="${isLandscape ? 12 : 18}" font-weight="bold">${text}</text>
+                <text x="${x + btnWidth/2}" y="${y + (btnHeight/2 + 5)}" text-anchor="middle" fill="#fff" font-family="Verdana" font-size="${isLandscape ? 12 : 24}" font-weight="bold">${text}</text>
             `;
             return g;
         }
