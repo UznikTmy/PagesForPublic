@@ -8,12 +8,18 @@
 		a {color: blue;}
         h1 {font-size: 21px; margin-bottom:0;}
         h2 {font-size: 12px; margin: 6px 0 18px;}
-        div {display:block; min-height:;300px;}
+		h3 {font-size: 18px; margin: 18px 0 18px;}
+        div {display: block; min-height:;300px;}
         div img {border: 1px solid black; float: left; margin: 0 10px 10px 0;}
-        div h3 {font-size: 14px; display: block; margin:0;}
-        div a {font: bold 12px Verdana; display:block; margin:6px 0;}
+        div h4 {font-size: 14px; display: block; margin:0;}
+        div a {font: bold 12px Verdana; display: block; margin:6px 0;}
         div span {font: 12px Verdana;}
-        div.clearfix {clear:both;}
+        div.clearfix {clear: both;}
+		div#page_navy {font-size: 13px; margin: 18px 0 18px 6px;}
+		div#page_navy a {display: inline; font-size: 13px; font-weight:normal;}
+		a.external_link { color:#00a; }
+		div#page_navy span.delim {display:block; height:4px;}
+		body {margin-bottom: 18px;}
     </style>
 
 </head>
@@ -27,12 +33,29 @@
     </a>
 </h2>
 
+<hr>
+
+<div id="page_navy">
+	&bull; Сборник материалов к статье "<a class="external_link" href="https://habr.com/ru/articles/986452/">Генерация колоды карт</a>". <br>
+    &nbsp; &nbsp; &nbsp; &nbsp; <a href="#materials">перейти &gt;&gt;</a> <br>
+	<span class="delim"></span>
+	&bull; Игры и квесты <br>
+    &nbsp; &nbsp; &nbsp; &nbsp; <a href="#games">перейти &gt;&gt;</a> <br>
+</div>
+
+<hr>
+
+<a name="materials"></a>
+
+<h3>&bull; Сборник материалов</h3>
+
+<hr>
 
 <div>
 	<a href="screenshot-0.png">
 	    <img src="screenshot-0-s.png" width="400" height="232" />
     </a>
-    <h3>1. Пасьянс "Узник"</h3>
+    <h4>1. Пасьянс "Узник"</h4>
     <a href="PrisonerSolitaire/index.html">PrisonerSolitaire/index.html</a>
     <span>
         Игра. Собирайте пары карты, сбрасывая верхние.
@@ -46,7 +69,7 @@
 	<a href="screenshot-1.png">
 	    <img src="screenshot-1-s.png" width="400" height="225" />
     </a>
-    <h3>2. Генерация случайных чисел без повторов</h3>
+    <h4>2. Генерация случайных чисел без повторов</h4>
     <a href="RandomSequence/index-desk-of-cards (part-1).html">RandomSequence/index-desk-of-cards (part-1).html</a>
     <span>
         Создание последовательности случайных чисел (колоды карт) методом перестановок.
@@ -60,7 +83,7 @@
 	<a href="screenshot-2.png">
 	    <img src="screenshot-2-s.png" width="400" height="225" />
     </a>
-    <h3>3. Статистика совпадения случайных событий</h3>
+    <h4>3. Статистика совпадения случайных событий</h4>
     <a href="RandomSequence/index-coincidences (part-2).html">RandomSequence/index-coincidences (part-2).html</a>
 	<a href="RandomSequence/index-coincidences (part-2-new).html" style="font-weight:normal; display:inline;">RandomSequence/index-coincidences (part-2-new).html</a>
     <span>(Обновленная версия)</span>
@@ -80,7 +103,7 @@
 	<a href="screenshot-3.png">
 	    <img src="screenshot-3-s.png" width="400" height="225" />
     </a>
-    <h3>4. Генерация созвездий</h3>
+    <h4>4. Генерация созвездий</h4>
     <a href="RandomSequence/index-radial (part-3).html">RandomSequence/index-radial (part-3).html</a>
 	<a href="RandomSequence/constellations (part-3-new).html" style="font-weight:normal; display:inline;">RandomSequence/constellations (part-3-new).html</a>
     <span>(Обновленная версия)</span>
@@ -97,13 +120,40 @@
 	<a href="screenshot-4.png">
 	    <img src="screenshot-4-s.png" width="400" height="225" />
     </a>
-    <h3>5. Звездное небо</h3>
+    <h4>5. Звездное небо</h4>
     <a href="RandomSequence/index-ellipse-move (part-4).html">RandomSequence/index-ellipse-move (part-4).html</a>
     <span>
         Динамическая модель, иллюстрирующая работу генератора случайных чисел. Используется "генератор совпадений" для образования сходящейся последовательности случайных чисел.
     </span>
     <div class="clearfix"></div>
 </div>
+
+<hr>
+
+<a name="games"></a>
+<h3>&bull; Игры и квесты</h3>
+
+<hr>
+
+<div>
+	<a href="game-skin.png">
+	    <img src="lighthouse-quest/game-skin.png" width="400" height="400" />
+    </a>
+    <h4>Текстовый хоррор-квест «Тайна маяка»</h4>
+    <a style="font-weight:normal;display:inline;" href="lighthouse-quest/index.html">Квест "Тайна маяка"</a>
+    <span>(html-версия)</span>
+    <br><br>
+    <span>
+		Попробуйте выбраться из заброшенного маяка, где каждый ваш выбор меняет ход событий. <br>
+		Интерактивная история на чистом JavaScript и динамическом SVG.<br>
+        <br>
+        <a style="font-weight:normal;" href="lighthouse-quest/urc-game-1-1.svg">svg-исходник</a>
+        @Urcgamebot - Телеграм-бот с этой игрой
+    </span>
+    <div class="clearfix"></div>
+</div>
+
+<hr>
 
 </body>
 </html>
