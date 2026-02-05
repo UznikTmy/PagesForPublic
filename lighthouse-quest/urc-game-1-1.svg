@@ -407,7 +407,7 @@
 	    ]
 	  },
 	  
-	"epilogue": {
+	  "epilogue": {
 	    title: "Рассвет",
 	    get desc() {
 			return "<div style='font-size:12px; line-height:1.25;'>Она смотрит на горизонт, где небо начинает едва заметно светлеть.<br/>— Меня зовут Элиза, — шепчет она. — И я ждала этого дня десять лет.<br/>Вы смотрите на её запястья, изрезанные цепями, и понимаете: шторм, который выбросил вас на этот берег, не был случайностью. Вы были здесь нужны.<br/><span style='color:#666;'>Над островом воцаряется тишина. Маяк больше не светит, но вам он больше и не нужен.</span></div>";
@@ -415,13 +415,29 @@
 	    choices: () => [
 	      { 
 	        text: "КОНЕЦ ИСТОРИИ", 
-	        action: () => {
-	            document.getElementById('room_desc').innerHTML = "<div style='text-align:center; margin-top:20px; font-style:italic; color:#fff;'>Вы прошли квест. <br/>Спасибо за участие в создании этой атмосферы!</div>";
-	            document.getElementById('choices').innerHTML = "";
-	        } 
+			next: "game_over_win"
 	      }
 	    ]
+	  },
+
+	  "game_over_win": {
+		title: "ФИНАЛ",
+		desc: "Поздравляем! Вы выбрались из маяка и спаслись.",
+		choices: () => [
+			{ text: "Играть снова", next: "the_end" }
+		]
+	  },
+
+	  "the_end": {
+		title: "БЛАГОДАРНОСТИ",
+		desc: "<div style='text-align:center; margin-top:20px; font-style:italic; color:#fff;'>Вы прошли квест. <br/>Спасибо за участие в создании этой атмосферы!</div>",
+		choices: () => [
+			{ 
+				text: "Играть снова", next: "start", action: () => { location.reload(); }
+			}
+		]
 	  }
+
     };
 
     function triggerScream() {
