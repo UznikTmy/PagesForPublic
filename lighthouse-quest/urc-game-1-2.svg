@@ -1,69 +1,51 @@
-<svg id="game-svg" xmlns="http://www.w3.org/2000/svg" style="width: 100vw; height: 100vh; background: #12151a;">
-  <rect id="bg" x="-2000" y="-2000" width="4000" height="4000" fill="#12151a" />
-  
-  <g id="ui-layer">
-    <rect id="ui-plate" fill="rgba(10, 10, 10, 0.95)" stroke="#333" stroke-width="1" />
-    <foreignObject id="ui-text-box">
-      <div xmlns="http://www.w3.org/1999/xhtml" style="color: #b0b0b0; font-family: 'Verdana', sans-serif; line-height: 1.4;">
-        <strong id="room_title" style="display: block; color: #fff; border-bottom: 2px solid #444; text-transform: uppercase;">ЛОКАЦИЯ</strong>
-        <div id="room_desc">Загрузка...</div>
-      </div>
-    </foreignObject>
-    <g id="choices"></g>
-  </g>
-
-  <script><![CDATA[
-function updateLayout() {
-        const svg = document.getElementById('game-svg');
-        const plate = document.getElementById('ui-plate');
-        const textBox = document.getElementById('ui-text-box');
-        const choicesG = document.getElementById('choices');
-
-        const w = window.innerWidth;
-        const h = window.innerHeight;
-        svg.setAttribute("viewBox", `0 0 ${w} ${h}`);
-
-        const uiHeight = h * 0.55; 
-        const uiY = h - uiHeight;
-        
-        plate.setAttribute("width", w);
-        plate.setAttribute("height", uiHeight + 100);
-        plate.setAttribute("y", uiY);
-
-        textBox.setAttribute("x", 20);
-        textBox.setAttribute("y", uiY + 20);
-        textBox.setAttribute("width", w - 40);
-        textBox.setAttribute("height", uiHeight * 0.5);
-        textBox.firstChild.style.fontSize = (w < 500) ? "17px" : "20px";
-
-        choicesG.setAttribute("transform", `translate(20, ${h - (uiHeight * 0.4)})`);
-    }
-
+<script><![CDATA[
+    // Ждем полной загрузки DOM, чтобы элементы гарантированно существовали
     window.addEventListener('load', () => {
+        
+        // 1. Настройка размеров (делаем это сразу)
+        const svg = document.querySelector('svg');
+        const updateLayout = () => {
+            const w = window.innerWidth;
+            const h = window.innerHeight;
+            svg.setAttribute("viewBox", `0 0 ${w} ${h}`);
+            
+            // Находим элементы интерфейса
+            const plate = document.getElementById('ui-plate');
+            const textBox = document.querySelector('foreignObject');
+            const choicesG = document.getElementById('choices');
+
+            if (plate && textBox && choicesG) {
+                const uiHeight = h * 0.55;
+                const uiY = h - uiHeight;
+                
+                plate.setAttribute("width", w);
+                plate.setAttribute("height", uiHeight + 100);
+                plate.setAttribute("y", uiY);
+
+                textBox.setAttribute("x", 20);
+                textBox.setAttribute("y", uiY + 20);
+                textBox.setAttribute("width", w - 40);
+                textBox.setAttribute("height", uiHeight * 0.5);
+                
+                choicesG.setAttribute("transform", `translate(20, ${h - (uiHeight * 0.35)})`);
+            }
+        };
+
         updateLayout();
         window.addEventListener('resize', updateLayout);
-        
-        // ВАЖНО: Вызываем отрисовку только здесь!
-        if (typeof renderRoom === "function") {
-            renderRoom("start");
-        }
-    });
 
-    let state = {
-		hasLamp: false,
-		hasPin: false,
-		pinInstalled: false,
-		hasTweezers: false,
-		knowsAboutStone: false,
-		seenThroughWindow: false,
-		doorOpened: false,
-		inspectCount: 0,
-		heardScream: false,
-		isEventActive: false,
-		hasAxe: false,
-		girlFreed: false,
-		isPursued: false
-	};
+        // 2. Инициализация игры
+        let state = {
+            hasLamp: false,
+            hasPin: false,
+            pinInstalled: false,
+            hasTweezers: false,
+            isEventActive: false,
+            inspectCount: 0,
+            heardScream: false,
+            knowsAboutStone: false,
+            seenThroughWindow: false
+        };
 
 	const rooms = {
 	  "start": {
@@ -403,43 +385,53 @@ function updateLayout() {
         btnGroup.appendChild(g);
     }
 
-    function createButton(text, index) {
-          const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
-          g.setAttribute("cursor", "pointer");
-          const screenW = window.innerWidth;
-          const colCount = screenW < 500 ? 1 : 2;
-          const btnWidth = (screenW - 40 - (colCount - 1) * 15) / colCount;
-          const btnHeight = 45;
-          const x = (index % colCount) * (btnWidth + 15);
-          const y = Math.floor(index / colCount) * (btnHeight + 10);
+	//
+        // 3. Вспомогательные функции
+        function createButton(text, index) {
+            const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
+            g.setAttribute("cursor", "pointer");
+            const screenW = window.innerWidth;
+            const colCount = screenW < 500 ? 1 : 2;
+            const btnWidth = (screenW - 40 - (colCount - 1) * 15) / colCount;
+            const btnHeight = 45;
+            const x = (index % colCount) * (btnWidth + 15);
+            const y = Math.floor(index / colCount) * (btnHeight + 10);
 
-          g.innerHTML = `
-              <rect x="${x}" y="${y}" width="${btnWidth}" height="${btnHeight}" rx="8" fill="#1e2229" stroke="#555" stroke-width="1.2"/>
-              <text x="${x + btnWidth/2}" y="${y + 28}" text-anchor="middle" fill="#fff" font-family="Verdana" font-size="14" font-weight="bold">${text}</text>
-          `;
-          return g;
+            g.innerHTML = `
+                <rect x="${x}" y="${y}" width="${btnWidth}" height="${btnHeight}" rx="8" fill="#1e2229" stroke="#555" stroke-width="1.2"/>
+                <text x="${x + btnWidth/2}" y="${y + 28}" text-anchor="middle" fill="#fff" font-family="Verdana" font-size="14" font-weight="bold">${text}</text>
+            `;
+            return g;
         }
 
-    function renderRoom(id) {
-        const room = rooms[id] || rooms["start"];
-        document.getElementById('room_title').textContent = room.title;
-        document.getElementById('room_desc').innerHTML = (typeof room.desc === 'function' ? room.desc() : room.desc);
-        
-        const btnGroup = document.getElementById('choices');
-        btnGroup.innerHTML = "";
-        
-        room.choices().forEach((choice, i) => {
-            const btn = createButton(choice.text, i);
-            btn.onclick = () => {
-                if (choice.action) choice.action();
-                renderRoom(choice.next);
-            };
-            btnGroup.appendChild(btn);
-        });
-        if (room.action) room.action();
-    }
+        function renderRoom(id) {
+            if (state.isEventActive) return;
+            const room = rooms[id] || rooms["start"];
+            const titleEl = document.getElementById('room_title');
+            const descEl = document.getElementById('room_desc');
+            const btnGroup = document.getElementById('choices');
 
-//    renderRoom("start");
-  ]]></script>
+            if (titleEl && descEl && btnGroup) {
+                titleEl.textContent = room.title;
+                descEl.innerHTML = (typeof room.desc === 'function' ? room.desc() : room.desc);
+                btnGroup.innerHTML = "";
+                
+                room.choices().forEach((choice, i) => {
+                    const btn = createButton(choice.text, i);
+                    btn.onclick = () => {
+                        if (choice.action) choice.action();
+                        renderRoom(choice.next);
+                    };
+                    btnGroup.appendChild(btn);
+                });
+                if (room.action) room.action();
+            }
+        }
+
+        // 4. СТАРТ
+        renderRoom("start");
+    });
+  
+]]></script>
 
 </svg>
