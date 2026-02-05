@@ -12,8 +12,12 @@
   <g id="choices" transform="translate(40, 545)"></g>
 
   <script><![CDATA[
-	const tg = window.Telegram.WebApp;
-	tg.expand(); // Разворачивает окно бота на максимум сразу при открытии
+	// Добавляем проверку, чтобы код не "падал" вне Telegram
+    const tg = window.Telegram ? window.Telegram.WebApp : null;
+    if (tg) {
+        tg.expand(); // Разворачивает окно бота
+        tg.ready();  // Сообщает Telegram, что приложение готово
+    }
     let state = {
 		hasLamp: false,
 		hasPin: false,
