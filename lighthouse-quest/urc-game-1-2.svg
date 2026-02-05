@@ -1,18 +1,46 @@
-<svg viewBox="0 0 800 600" preserveAspectRatio="xMidYMax meet" xmlns="http://www.w3.org/2000/svg" style="width: 100vw; height: 100vh; position: absolute; bottom: 0; left: 0;">
-  <rect id="bg" x="-400" y="-1000" width="1600" height="2000" fill="#12151a" />
+<svg id="game-svg" xmlns="http://www.w3.org/2000/svg" style="width: 100vw; height: 100vh; background: #12151a;">
+  <rect id="bg" x="-2000" y="-2000" width="4000" height="4000" fill="#12151a" />
   
-  <rect y="250" width="800" height="350" fill="#0d0d0d" stroke="#222" stroke-width="1" />
-  
-  <foreignObject x="40" y="270" width="720" height="220">
-    <div xmlns="http://www.w3.org/1999/xhtml" style="color: #a0a0a0; font-family: 'Verdana', sans-serif; font-size: 16px; line-height: 1.5;">
-      <strong id="room_title" style="font-size: 20px; display: block; margin-bottom: 8px; color: #ccc; border-bottom: 1px solid #1a1a1a; padding-bottom: 5px;">ЛОКАЦИЯ</strong>
-      <div id="room_desc">Текст загружается...</div>
-    </div>
-  </foreignObject>
-
-  <g id="choices" transform="translate(40, 500)"></g>
+  <g id="ui-layer">
+    <rect id="ui-plate" fill="rgba(10, 10, 10, 0.95)" stroke="#333" stroke-width="1" />
+    <foreignObject id="ui-text-box">
+      <div xmlns="http://www.w3.org/1999/xhtml" style="color: #b0b0b0; font-family: 'Verdana', sans-serif; line-height: 1.4;">
+        <strong id="room_title" style="display: block; color: #fff; border-bottom: 2px solid #444; text-transform: uppercase;">ЛОКАЦИЯ</strong>
+        <div id="room_desc">Текст загружается...</div>
+      </div>
+    </foreignObject>
+    <g id="choices"></g>
+  </g>
 
   <script><![CDATA[
+    // Настройка экрана под пропорции устройства
+    const svg = document.getElementById('game-svg');
+    const w = window.innerWidth;
+    const h = window.innerHeight;
+    svg.setAttribute("viewBox", `0 0 ${w} ${h}`);
+
+    // Настраиваем размеры интерфейса динамически
+    const plate = document.getElementById('ui-plate');
+    const textBox = document.getElementById('ui-text-box');
+    const choicesG = document.getElementById('choices');
+    const uiLayer = document.getElementById('ui-layer');
+
+    // Интерфейс занимает нижние 60% экрана
+    const uiHeight = h * 0.6;
+    const uiY = h - uiHeight;
+    
+    plate.setAttribute("width", w);
+    plate.setAttribute("height", uiHeight);
+    plate.setAttribute("y", uiY);
+
+    textBox.setAttribute("x", 20);
+    textBox.setAttribute("y", uiY + 20);
+    textBox.setAttribute("width", w - 40);
+    textBox.setAttribute("height", uiHeight * 0.6);
+    textBox.firstChild.style.fontSize = (w < 500) ? "18px" : "22px"; // Адаптивный шрифт
+
+    choicesG.setAttribute("transform", `translate(20, ${h - (uiHeight * 0.35)})`);
+
     let state = {
 		hasLamp: false,
 		hasPin: false,
@@ -370,12 +398,22 @@
     function createButton(text, index) {
         const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
         g.setAttribute("cursor", "pointer");
-        // Увеличиваем шаг (245) и размеры кнопок (235x42) 
-        g.innerHTML = `<rect x="${(index % 3) * 245}" y="${Math.floor(index / 3) * 50}" width="235" height="42" rx="4" fill="#1a1d22" stroke="#333"/>
-                       <text x="${(index % 3) * 245 + 117}" y="${Math.floor(index / 3) * 50 + 26}" text-anchor="middle" fill="#aaa" font-family="Verdana" font-size="13" font-weight="bold">${text}</text>`;
+        
+        const screenW = window.innerWidth;
+        const colCount = screenW < 500 ? 1 : 2; // 1 колонка на узких телефонах, 2 на планшетах
+        const btnWidth = (screenW - 40 - (colCount - 1) * 15) / colCount;
+        const btnHeight = 45;
+        
+        const x = (index % colCount) * (btnWidth + 15);
+        const y = Math.floor(index / colCount) * (btnHeight + 10);
+
+        g.innerHTML = `
+            <rect x="${x}" y="${y}" width="${btnWidth}" height="${btnHeight}" rx="8" fill="#1e2229" stroke="#555" stroke-width="1.5"/>
+            <text x="${x + btnWidth/2}" y="${y + 28}" text-anchor="middle" fill="#fff" font-family="Verdana" font-size="14" font-weight="bold">${text}</text>
+        `;
         return g;
     }
-	  
+
     function renderRoom(id) {
       if (state.isEventActive) return;
       const room = rooms[id] || rooms["start"];
@@ -394,3 +432,4 @@
   ]]></script>
 
 </svg>
+
