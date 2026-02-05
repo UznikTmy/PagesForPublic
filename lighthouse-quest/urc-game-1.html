@@ -28,6 +28,17 @@
             height: 100%;
             touch-action: none;
         }
+
+		#room_desc, #room_title {
+			/* Запрещаем браузеру самовольно менять размер шрифта */
+			text-size-adjust: none;
+			-webkit-text-size-adjust: none;
+		}
+
+		#room_desc {
+			/* Увеличиваем межстрочный интервал для читабельности на малых экранах */
+			line-height: 1.6 !important; 
+		}
     </style>
 </head>
 <body>
@@ -52,51 +63,52 @@
     <script>
     window.addEventListener('load', () => {
         
-        // 1. Настройка размеров (делаем это сразу)
-        const svg = document.querySelector('svg');
-        const updateLayout = () => {
-			const container = document.getElementById('game-container');
-			const w = container.clientWidth;
-			const h = container.clientHeight;
-			
-			const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-			const isLandscape = (w > h && isMobile);
+	// 1. Настройка размеров (делаем это сразу)
+		const svg = document.querySelector('svg');
+		const updateLayout = () => {
+		const container = document.getElementById('game-container');
+		const w = container.clientWidth;
+		const h = container.clientHeight;
+		
+		const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+		const isLandscape = (w > h && isMobile);
 //            const isLandscape = w > h; // Проверка ориентации
 
-            svg.setAttribute("viewBox", `0 0 ${w} ${h}`);
-            
-            const plate = document.getElementById('ui-plate');
-            const textBox = document.querySelector('foreignObject');
-            const choicesG = document.getElementById('choices');
+		svg.setAttribute("viewBox", `0 0 ${w} ${h}`);
+		
+		const plate = document.getElementById('ui-plate');
+		const textBox = document.querySelector('foreignObject');
+		const choicesG = document.getElementById('choices');
 
-            if (plate && textBox && choicesG) {
-                // В горизонтальном режиме панель занимает 70% высоты, но она сама меньше
-                // В вертикальном оставляем 15% снизу под навигацию телефона
-                const uiHeight = isLandscape ? h * 0.8 : h * 0.5;
-                const safeMargin = isLandscape ? 10 : 60; // Отступ снизу
-                const uiY = h - uiHeight - safeMargin;
-                
-                plate.setAttribute("width", w);
-                plate.setAttribute("height", uiHeight + 200);
-                plate.setAttribute("y", uiY);
+		if (plate && textBox && choicesG) {
+			// В горизонтальном режиме панель занимает 70% высоты, но она сама меньше
+			// В вертикальном оставляем 15% снизу под навигацию телефона
+			const uiHeight = isLandscape ? h * 0.8 : h * 0.5;
+			const safeMargin = isLandscape ? 10 : 60; // Отступ снизу
+			const uiY = h - uiHeight - safeMargin;
+			
+			plate.setAttribute("width", w);
+			plate.setAttribute("height", uiHeight + 200);
+			plate.setAttribute("y", uiY);
 
-                // Текстовая область
-                textBox.setAttribute("x", 20);
-                textBox.setAttribute("y", uiY + 15);
-                textBox.setAttribute("width", w - 40);
-                // В горизонтальном режиме сильно ограничиваем высоту текста
-                textBox.setAttribute("height", isLandscape ? uiHeight * 0.4 : uiHeight * 0.5);
-                
-                // Смещаем кнопки: в Landscape они выше, в Portrait ниже
-                const buttonsY = h - safeMargin - (isLandscape ? uiHeight * 0.4 : uiHeight * 0.35);
-                choicesG.setAttribute("transform", `translate(20, ${buttonsY})`);
-                
-                // Перерисовываем кнопки при изменении экрана
-                if (typeof currentStateId !== 'undefined') renderRoom(currentStateId);
-            }
-        };
-        updateLayout();
-        window.addEventListener('resize', updateLayout);
+			// Текстовая область
+			textBox.setAttribute("x", 20);
+			textBox.setAttribute("y", uiY + 15);
+			textBox.setAttribute("width", w - 40);
+
+			// В горизонтальном режиме сильно ограничиваем высоту текста
+			textBox.setAttribute("height", isLandscape ? uiHeight * 0.4 : uiHeight * 0.5);
+			
+			// Смещаем кнопки: в Landscape они выше, в Portrait ниже
+			const buttonsY = h - safeMargin - (isLandscape ? uiHeight * 0.4 : uiHeight * 0.35);
+			choicesG.setAttribute("transform", `translate(20, ${buttonsY})`);
+			
+			// Перерисовываем кнопки при изменении экрана
+			if (typeof currentStateId !== 'undefined') renderRoom(currentStateId);
+		}
+	};
+	updateLayout();
+	window.addEventListener('resize', updateLayout);
 
         // 2. Инициализация игры
 	let state = {
@@ -528,20 +540,20 @@
             g.setAttribute("cursor", "pointer");
             
             const screenW = window.innerWidth;
-            const isLandscape = screenW > window.innerHeight;
+            const isLandscape = (screenW > window.innerHeight && isMobile);
             
             // В вертикальном режиме - 1 колонка (на всю ширину)
             // В горизонтальном - 2 колонки
             const colCount = isLandscape ? 2 : 1;
             const btnWidth = (screenW - 40 - (colCount - 1) * 10) / colCount;
-            const btnHeight = isLandscape ? 35 : 45; // В горизонте кнопки чуть ниже
+            const btnHeight = isLandscape ? 35 : 65; // В горизонте кнопки чуть ниже
             
             const x = (index % colCount) * (btnWidth + 10);
             const y = Math.floor(index / colCount) * (btnHeight + 8);
 
             g.innerHTML = `
                 <rect x="${x}" y="${y}" width="${btnWidth}" height="${btnHeight}" rx="6" fill="#1e2229" stroke="#555" stroke-width="1.2"/>
-                <text x="${x + btnWidth/2}" y="${y + (btnHeight/2 + 5)}" text-anchor="middle" fill="#fff" font-family="Verdana" font-size="${isLandscape ? 12 : 14}" font-weight="bold">${text}</text>
+                <text x="${x + btnWidth/2}" y="${y + (btnHeight/2 + 5)}" text-anchor="middle" fill="#fff" font-family="Verdana" font-size="${isLandscape ? 12 : 18}" font-weight="bold">${text}</text>
             `;
             return g;
         }
