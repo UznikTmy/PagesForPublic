@@ -62,7 +62,7 @@
 
     <script>
     window.addEventListener('load', () => {
-        alert(navigator.userAgent);
+
 		// 1. Настройка размеров (делаем это сразу)
 		const svg = document.querySelector('svg');
 		const updateLayout = () => {
@@ -117,7 +117,7 @@
 			const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 			const isLandscape = screenW > container.clientHeight;
 			
-			const fontSize = (!isLandscape && isMobile) ? "48px" : "16px";
+			const fontSize = (!isLandscape && isMobile) ? "18px" : "16px";
 		
 			// В вертикальном режиме - 1 колонка (на всю ширину)
 			// В горизонтальном - 2 колонки
@@ -148,7 +148,7 @@
 			const screenW = container.clientWidth;
 			const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 			const isLandscape = screenW > container.clientHeight;
-			const fontSize = (!isLandscape && isMobile) ? "48px" : "16px";
+			const fontSize = (!isLandscape && isMobile) ? "18px" : "16px";
 			descEl.style.fontSize = fontSize;
 			titleEl.style.fontSize = fontSize;
 
@@ -606,6 +606,7 @@
 </script>
 </body>
 </html>
+
 
 
 
