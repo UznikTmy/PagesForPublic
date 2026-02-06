@@ -117,7 +117,7 @@
 			const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 			const isLandscape = screenW > container.clientHeight;
 			
-			const fontSize = (!isLandscape && isMobile) ? 48 : 16;
+			const fontSize = (!isLandscape && isMobile) ? 18 : 16;
 		
 			// В вертикальном режиме - 1 колонка (на всю ширину)
 			// В горизонтальном - 2 колонки
@@ -148,9 +148,9 @@
 			const screenW = container.clientWidth;
 			const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 			const isLandscape = screenW > container.clientHeight;
-			const fontSize = (!isLandscape && isMobile) ? 24 : 16;
+			const fontSize = (!isLandscape && isMobile) ? 18 : 16;
 			descEl.style.fontSize = fontSize;
-//			titleEl.style.fontSize = (!isLandscape && isMobile) ? 24 : 16;
+			titleEl.style.fontSize = (!isLandscape && isMobile) ? 24;
 
 			if (titleEl && descEl && btnGroup) {
 				titleEl.textContent = room.title;
@@ -606,5 +606,3 @@
 </script>
 </body>
 </html>
-
-
