@@ -31,8 +31,8 @@
 
 		#room_desc, #room_title {
 			/* Запрещаем браузеру самовольно менять размер шрифта */
-			text-size-adjust: none;
-			-webkit-text-size-adjust: none;
+			text-size-adjust: 100%;
+			-webkit-text-size-adjust: 100%;
 		}
 
 		#room_desc {
@@ -148,9 +148,9 @@
 			const screenW = container.clientWidth;
 			const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 			const isLandscape = screenW > container.clientHeight;
-//			const fontSize = (!isLandscape && isMobile) ? "24px" : "16px";
-			descEl.style.fontSize = isMobile ? "24px" : "16px";
-			titleEl.style.fontSize = !isLandscape ? "24px" : "16px";
+			const fontSize = (!isLandscape && isMobile) ? "24px" : "16px";
+			descEl.style.fontSize = fontSize;
+			titleEl.style.fontSize = fontSize;
 
 			if (titleEl && descEl && btnGroup) {
 				titleEl.textContent = room.title;
@@ -606,6 +606,7 @@
 </script>
 </body>
 </html>
+
 
 
 
